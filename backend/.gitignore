@@ -1,0 +1,65 @@
+# ---- General ----
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- Node / React ----
+node_modules/
+build/
+dist/
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+.vite/
+.next/
+.cache/
+
+# ---- .NET / C# ----
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+*.dbmdl
+*.pdb
+*.mdb
+*.opendb
+*.resharper
+*.sln.ide
+*.ncrunch*
+_ReSharper*/
+.vscode/
+.vs/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# ---- Docker ----
+**/Dockerfile
+.dockerignore
+.docker/
+
+# ---- Others ----
+.idea/
+*.iml
+*.tgz
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Ignore system-level files
+ehthumbs.db
+Icon?
+Desktop.ini
