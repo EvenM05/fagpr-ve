@@ -1,12 +1,12 @@
 version: "3.8"
 services:
   db:
-    image: postgres
+    image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: POSTGRES_USER
-      POSTGRES_PASSWORD: pgpassword
-      POSTGRES_DB: pgdatabase
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpassowrd
+      POSTGRES_DB: fpdatabase
     ports:
       - 5432:5432
     volumes:

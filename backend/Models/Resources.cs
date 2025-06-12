@@ -19,7 +19,7 @@ namespace Fagprove.Models
         
         public Guid ProjectId { get; set; }
         
-        [ForeignKey("ComplaintId")]
-        public Project Project { get; set; } = null!;
+        [ForeignKey("ProjectId")]
+        public Project? Project { get; set; } = null!;
     }
 }

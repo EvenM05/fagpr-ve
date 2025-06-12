@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Kundeklager.Utils
+namespace Fagprove.Utils
 {
     public static class JwtTokenManager
     {

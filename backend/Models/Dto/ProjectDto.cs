@@ -1,15 +1,22 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Versioning;
 using Fagprove.Utils.Enums;
 
-namespace Fagprove.Models
+namespace Fagprove.Models.Dto
 {
-    public class Project
+    public class CreateProjectDto
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Guid CreatedUserId { get; set; }
+
+    }
+
+    public class ProjectPaginationDto
+    {
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -20,16 +27,8 @@ namespace Fagprove.Models
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-
-        public Guid CreatedUserId {get; set; }
-
-        [ForeignKey("CreatedUserId")]
-        public User? CreatedUser { get; set; }
-        
-        public Guid UpdatedUserId {get; set; }
-
-        [ForeignKey("UpdatedUserId")]
-        public User? UpdatedUser { get; set; }
+        public User CreatedUser { get; set; }
+        public User UpdatedUser { get; set; }
 
         public ICollection<Resources>? Resources { get; set; }
     }

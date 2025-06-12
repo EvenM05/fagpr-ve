@@ -20,7 +20,7 @@ namespace Fagprove.Models
         [StringLength(50)]
         public string? Salt { get; set; }
 
-        public RoleEnum Role { get; set; }
+        public RoleEnum? RoleId { get; set; }
         
     }
 }
