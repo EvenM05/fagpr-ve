@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { useLogin } from "../api/hooks";
 import { LoginModel } from "../utilities/Interfaces/LoginInterface";
 import { saveToStorage } from "../utilities/localStorage";
+import { CreateUserData } from "../utilities/Interfaces/UserInterfaces";
 
 // Create a modern theme
 const theme = createTheme({
@@ -56,32 +57,27 @@ const theme = createTheme({
   },
 });
 
-interface FormData {
-  email: string;
-  password: string;
-}
-
-export default function LoginPage() {
+export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { mutateAsync: userLogin } = useLogin(() => navigate("/dashboard"));
+  const { mutateAsync: userLogin } = useLogin(() => navigate("/Dashboard"));
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginModel>({
+  } = useForm<CreateUserData>({
     defaultValues: {
       email: "",
       password: "",
     },
-    mode: "onChange", // Validate on change for better UX
+    mode: "onChange",
   });
 
-  const onSubmit = async (data: LoginModel) => {
-    setIsLoading(true);
+  const onSubmit = async (data: CreateUserData) => {
+    setLoginLoading(true);
     const loginResponse = await userLogin(data);
 
     if (loginResponse) {
@@ -90,7 +86,7 @@ export default function LoginPage() {
     } else {
       console.error("Error occured while logging in");
     }
-    setIsLoading(false);
+    setLoginLoading(false);
   };
 
   return (
@@ -123,7 +119,7 @@ export default function LoginPage() {
                     gutterBottom
                     sx={{ mb: 1 }}
                   >
-                    Login
+                    Welcome Back
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
                     Sign in to your account to continue
@@ -131,6 +127,36 @@ export default function LoginPage() {
                 </Box>
 
                 <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: "Please enter a valid email",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        label="Email Address"
+                        type="email"
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                        sx={{ mb: 2 }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Email color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+
                   <Controller
                     name="email"
                     control={control}
@@ -201,12 +227,38 @@ export default function LoginPage() {
                     )}
                   />
 
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock color="action" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
                   <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                     size="large"
-                    disabled={isLoading}
+                    disabled={loginLoading}
                     sx={{
                       mb: 2,
                       py: 1.5,
@@ -215,7 +267,7 @@ export default function LoginPage() {
                       fontWeight: 600,
                     }}
                   >
-                    {isLoading ? "Signing In..." : "Sign In"}
+                    {loginLoading ? "Signing In..." : "Sign In"}
                   </Button>
 
                   <Stack direction="row" justifyContent="space-evenly">
@@ -231,7 +283,7 @@ export default function LoginPage() {
                         variant="body2"
                         color="primary"
                       >
-                        Don't have an account?
+                        Already have an account?
                       </Typography>
                     </Button>
                   </Stack>

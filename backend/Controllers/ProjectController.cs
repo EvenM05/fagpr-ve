@@ -27,7 +27,7 @@ namespace Farprove.Controllers
         }
 
         [HttpPost("CreateProject")]
-        public async Task<IActionResult> CreateProject( CreateProjectDto model)
+        public async Task<IActionResult> CreateProject(CreateProjectDto model)
         {
             if (ModelState.IsValid)
             {
@@ -50,6 +50,26 @@ namespace Farprove.Controllers
             return BadRequest(model);
         }
 
+
+
+        [HttpPut("UpdateProjectStatus")]
+        public async Task<IActionResult> UpdateProjectStatus(Guid id, StatusUpdateDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var project = await _appDbContext.Project.FindAsync(id);
+
+                project.Status = model.statusEnum;
+                project.UpdatedUserId = model.UpdatedUserId;
+                project.UpdatedDate = DateTime.UtcNow;
+
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok(project);
+            }
+            return BadRequest(model);
+        }
+
         [HttpGet("GetProjects")]
         public async Task<IActionResult> GetProjectPagination([FromQuery] string searchValue = "", int page = 1, int pageSize = 10, string sortOrder = "desc", int statusFilter = 0)
         {
@@ -61,17 +81,17 @@ namespace Farprove.Controllers
             }
 
             if (sortOrder == "asc")
-                {
-                    query = query.OrderBy(c => c.CreatedDate);
-                }
-                else if (sortOrder == "desc")
-                {
-                    query = query.OrderByDescending(c => c.CreatedDate);
-                }
-                else
-                {
-                    return BadRequest("Invalid sortOrder parameter. Use 'asc' or 'desc'.");
-                }
+            {
+                query = query.OrderBy(c => c.CreatedDate);
+            }
+            else if (sortOrder == "desc")
+            {
+                query = query.OrderByDescending(c => c.CreatedDate);
+            }
+            else
+            {
+                return BadRequest("Invalid sortOrder parameter. Use 'asc' or 'desc'.");
+            }
 
             var totalProjects = await query.CountAsync();
             var projects = await query.Skip((page - 1) * pageSize).Take(pageSize).Select(p => new ProjectPaginationDto
@@ -85,21 +105,32 @@ namespace Farprove.Controllers
                 CreatedUser = p.CreatedUser,
                 UpdatedUser = p.UpdatedUser,
                 Resources = p.Resources
-                // Resources = _appDbContext.Resources.Where(r => r.ProjectId == p.Id).Select(r => new Resources
-                // {
-                //     Id = r.Id,
-                //     EstimateType = r.EstimateType,
-                //     TimeHours = r.TimeHours,
-                //     TimeCost = r.TimeCost,
-                //     TotalCost = r.TotalCost,
-                //     ProjectId = r.ProjectId,
-                // }).ToList()
+
             }).ToListAsync();
 
             var result = new
             {
-                totalProjects,
-                projects
+                items = projects,
+                totalItems = totalProjects
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetProjectStatusList")]
+        public async Task<IActionResult> GetProjectStatusList()
+        {
+            var toDoProjects = await _appDbContext.Project.Where(p => p.Status == StatusEnum.ToDo).CountAsync();
+            var startedProjects = await _appDbContext.Project.Where(p => p.Status == StatusEnum.InProgress).CountAsync();
+            var completedProjects = await _appDbContext.Project.Where(p => p.Status == StatusEnum.Completed).CountAsync();
+            var cancelledProjects = await _appDbContext.Project.Where(p => p.Status == StatusEnum.Cancelled).CountAsync();
+
+            var result = new
+            {
+                toDoProjects,
+                startedProjects,
+                completedProjects,
+                cancelledProjects,
             };
 
             return Ok(result);

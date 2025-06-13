@@ -7,9 +7,3 @@ export interface LoginResponseModel {
   token: string;
   userId: string;
 }
-
-export interface RegisterModel {
-  name: string;
-  email: string;
-  password: string;
-}

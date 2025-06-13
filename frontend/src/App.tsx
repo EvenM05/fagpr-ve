@@ -3,6 +3,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProjectDashboard from "./pages/ProjectDashboard";
 import ProjectOverview from "./pages/ProjectOverview";
 import LoginPage from "./pages/LoginPage";
+import "./App.css";
+import { Appbar } from "./components/appbar";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./utilities/themeOptions";
+import { AdminRoute, ProtectedRoute } from "./utilities/protectedRoute";
+import { UserOverview } from "./pages/UserOverview";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -10,30 +16,41 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
+      element: (
+        <ProtectedRoute>
+          <Appbar />
+        </ProtectedRoute>
+      ),
       children: [
         {
-          path: "/dashboard",
+          path: "dashboard",
           element: <ProjectDashboard />,
         },
         {
-          path: "/overview",
+          path: "overview",
           element: <ProjectOverview />,
         },
         {
-          path: "/register",
-          element: <p />,
-        },
-        {
-          path: "/login",
-          element: <LoginPage />,
+          path: "admin/users",
+          element: (
+            <AdminRoute>
+              <UserOverview />
+            </AdminRoute>
+          ),
         },
       ],
+    },
+    {
+      path: "/login",
+      element: <LoginPage />,
     },
   ]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

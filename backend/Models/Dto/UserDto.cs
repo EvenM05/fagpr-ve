@@ -13,6 +13,13 @@ namespace Fagprove.Models.Dto
         public RoleEnum? RoleId { get; set; }
     }
 
+    public class UpdateUserDto
+    {
+        public string? name { get; set; }
+        public string? newPassword { get; set; }
+        public RoleEnum? RoleId {get; set; }
+    }
+
     public class GetUserByIdDto
     {
         public Guid Id { get; set; }

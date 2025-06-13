@@ -32,4 +32,10 @@ namespace Fagprove.Models.Dto
 
         public ICollection<Resources>? Resources { get; set; }
     }
+
+    public class StatusUpdateDto
+    {
+        public StatusEnum statusEnum { get; set; }
+        public Guid UpdatedUserId { get; set; }
+    }
 }
