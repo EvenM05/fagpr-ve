@@ -85,6 +85,36 @@ namespace Fagprove.Controllers
             return BadRequest(updateModel);
         }
 
+        [HttpGet("GetUserPagination")]
+        public async Task<IActionResult> GetUserPagination([FromQuery] string searchValue = "", int page = 1, int pageSize = 10, RoleEnum? roleFilter = null)
+        {
+            IQueryable<User> query = _appDbContext.User.Where(u => u.Name.ToLower().Contains(searchValue.ToLower()));
+
+            Console.WriteLine(roleFilter);
+
+            if (roleFilter != null)
+            {
+                query = query.Where(u => u.RoleId == roleFilter);
+            }
+
+            var totalUsers = await query.CountAsync();
+            var users = await query.Skip((page - 1) * pageSize).Take(pageSize).Select(u => new GetUserByIdDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                RoleId = u.RoleId
+            }).ToListAsync();
+
+            var result = new
+            {
+                items = users,
+                totalItems = totalUsers,
+            };
+
+            return Ok(result);
+        }
+
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -98,6 +128,20 @@ namespace Fagprove.Controllers
 
             return Ok(users);
         }
+
+        [HttpGet("GetUserRoleData")]
+        public async Task<IActionResult> GetUserRoleData()
+        {
+            var result = new
+            {
+                total = await _appDbContext.User.CountAsync(),
+                regularUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.ProjectManager).CountAsync(),
+                pmUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.ProjectManager).CountAsync(),
+                adminUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.Admin).CountAsync()
+            };
+            return Ok(result);
+        }
+
 
         [HttpGet("GetUserById")]
         public async Task<IActionResult> GetUserById(Guid id)

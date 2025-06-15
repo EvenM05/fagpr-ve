@@ -1,3 +1,4 @@
+import { RoleEnum } from "../../utilities/enums/roleEnums";
 import { StatusEnum } from "../../utilities/enums/statusEnums";
 import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
 import {
@@ -9,6 +10,7 @@ import {
   CreateUserData,
   UpdateUserModel,
   UserData,
+  UserRoleData,
 } from "../../utilities/Interfaces/UserInterfaces";
 import http from "../http";
 
@@ -56,6 +58,36 @@ export class ApiClient {
     }
   }
 
+  static async getUserPagination(
+    searchValue: string,
+    page: number,
+    pageSize: number,
+    roleId?: RoleEnum,
+  ) {
+    try {
+      const params = new URLSearchParams({
+        searchValue,
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+      });
+
+      if (roleId) {
+        params.append("roleFilter", roleId.toString());
+      }
+
+      const url = `${
+        ApiClient.baseUrl
+      }User/GetUserPagination?${params.toString()}`;
+
+      const response = await http.get(url);
+
+      const data: PaginationBase<UserData> = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting data: ", error);
+    }
+  }
+
   static async getAllUsers() {
     try {
       const response = await http.get(ApiClient.baseUrl + "User/GetAllUsers");
@@ -77,6 +109,18 @@ export class ApiClient {
       return data;
     } catch (error) {
       console.error("Error getting data: ", error);
+    }
+  }
+
+  static async getUserRoleData() {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl + "User/GetUserRoleData",
+      );
+      const data: UserRoleData = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting user role data: ", error);
     }
   }
 

@@ -19,3 +19,10 @@ export interface UpdateUserModel {
   password?: string;
   roleId?: RoleEnum;
 }
+
+export interface UserRoleData {
+  total: number;
+  regularUser: number;
+  pmUser: number;
+  adminUser: number;
+}

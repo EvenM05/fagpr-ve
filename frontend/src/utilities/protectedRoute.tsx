@@ -12,9 +12,9 @@ export const AdminRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const userId = retrieveFromStorage("userId");
 
   const { data: userData } = useGetUserById(userId || "");
-  console.log(userData?.roleId);
 
   if (userData?.roleId !== RoleEnum.Admin) {
+    console.log("unautherized admin");
     return <Navigate to={"/Dashboard"} />;
   }
 
@@ -25,6 +25,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const token = retrieveFromStorage("token");
 
   if (!token) {
+    console.log("unautherized");
     return <Navigate to={"/login"} />;
   }
 

@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Button,
+  ButtonGroup,
   Divider,
   IconButton,
   Menu,
@@ -52,21 +53,40 @@ export const Appbar = () => {
     >
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuOutlined />
-          </IconButton>
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
+          <MenuOutlined />
+
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>
             Projex
           </Typography>
 
+          <ButtonGroup sx={{ gap: "1em" }}>
+            <Button
+              onClick={() => navigate("/Dashboard")}
+              sx={{
+                float: "right",
+                backgroundColor: "transparent",
+                gap: "1em",
+                color: "white",
+                borderBottom: "1px solid",
+              }}
+            >
+              <Typography>Dashboard</Typography>
+            </Button>
+            <Button
+              onClick={() => navigate("/ProjectOverview")}
+              sx={{
+                float: "right",
+                backgroundColor: "transparent",
+                gap: "1em",
+                color: "white",
+                borderBottom: "1px solid",
+              }}
+            >
+              <Typography>Project overview</Typography>
+            </Button>
+          </ButtonGroup>
+
           <Button
-            id="demo-customized-button"
             aria-haspopup="true"
             aria-expanded={Boolean(anchorEl)}
             variant="contained"
@@ -106,8 +126,8 @@ export const Appbar = () => {
               <MenuItem onClick={() => navigate("/admin/users")}>
                 User page
               </MenuItem>
-              <MenuItem>2</MenuItem>
-              <MenuItem>3</MenuItem>
+              <MenuItem>Customer page</MenuItem>
+              <MenuItem>Settings</MenuItem>
               <Divider />
               <MenuItem onClick={handleLogOut}>Log out</MenuItem>
             </MenuList>

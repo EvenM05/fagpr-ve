@@ -9,12 +9,16 @@ import {
   GET_PROJECT_PAGINATION,
   GET_PROJECT_STATUS_LIST,
   GET_USER_BY_ID,
+  GET_USER_PAGINATION,
+  GET_USER_ROLE_DATA,
 } from "../constants";
 import { StatusEnum } from "../../utilities/enums/statusEnums";
 import {
+  CreateUserData,
   UpdateUserModel,
   UserData,
 } from "../../utilities/Interfaces/UserInterfaces";
+import { RoleEnum } from "../../utilities/enums/roleEnums";
 
 /* login hooks */
 export const useLogin = (onSuccess: () => void) =>
@@ -25,6 +29,13 @@ export const useLogin = (onSuccess: () => void) =>
   });
 
 /* User hooks */
+export const usePostUser = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (data: CreateUserData): Promise<UserData> =>
+      ApiClient.postUser(data),
+    onSuccess,
+  });
+
 export const useUpdateUser = (onSuccess: () => void) =>
   useMutation({
     mutationFn: (data: {
@@ -32,6 +43,18 @@ export const useUpdateUser = (onSuccess: () => void) =>
       model: UpdateUserModel;
     }): Promise<UserData> => ApiClient.updateUserData(data.userId, data.model),
     onSuccess,
+  });
+
+export const useGetUserPagination = (
+  searchValue: string,
+  page: number,
+  pageSize: number,
+  roleId: RoleEnum | undefined,
+) =>
+  useQuery({
+    queryKey: [GET_USER_PAGINATION, searchValue, page, pageSize, roleId],
+    queryFn: () =>
+      ApiClient.getUserPagination(searchValue, page, pageSize, roleId),
   });
 
 export const useGetAllUsers = () =>
@@ -44,6 +67,18 @@ export const useGetUserById = (id: string) =>
   useQuery({
     queryKey: [GET_USER_BY_ID, id],
     queryFn: () => ApiClient.getUserById(id),
+  });
+
+export const useGetUserRoleData = () =>
+  useQuery({
+    queryKey: [GET_USER_ROLE_DATA],
+    queryFn: () => ApiClient.getUserRoleData(),
+  });
+
+export const useDeleteUser = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (id: string): Promise<UserData> => ApiClient.deleteuser(id),
+    onSuccess,
   });
 
 /* Project hooks */
