@@ -126,7 +126,9 @@ export const Appbar = () => {
               <MenuItem onClick={() => navigate("/admin/users")}>
                 User page
               </MenuItem>
-              <MenuItem>Customer page</MenuItem>
+              <MenuItem onClick={() => navigate("/admin/customer")}>
+                Customer page
+              </MenuItem>
               <MenuItem>Settings</MenuItem>
               <Divider />
               <MenuItem onClick={handleLogOut}>Log out</MenuItem>

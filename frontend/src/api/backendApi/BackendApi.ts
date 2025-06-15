@@ -1,5 +1,9 @@
 import { RoleEnum } from "../../utilities/enums/roleEnums";
 import { StatusEnum } from "../../utilities/enums/statusEnums";
+import {
+  CreateCustomerData,
+  CustomerData,
+} from "../../utilities/Interfaces/CustomerInterface";
 import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
 import {
   PaginationBase,
@@ -167,6 +171,37 @@ export class ApiClient {
       return data;
     } catch (error) {
       console.error("Error getting data: ", error);
+    }
+  }
+
+  /* Customer api */
+  static async postCustomer(model: CreateCustomerData) {
+    try {
+      const response = await http.post(
+        ApiClient.baseUrl + "Customer/CreateCustomer",
+        model,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating customer: ", error);
+    }
+  }
+
+  static async getCustomerPagination(
+    searchValue: string,
+    page: number,
+    pageSize: number,
+  ) {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl +
+          `Customer/GetCustomerPagination?searchValue=${searchValue}&page=${page}&pageSize=${pageSize}`,
+      );
+
+      const data: PaginationBase<CustomerData> = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting customer: ", error);
     }
   }
 }

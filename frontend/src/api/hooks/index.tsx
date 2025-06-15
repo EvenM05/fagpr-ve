@@ -6,6 +6,7 @@ import {
 import { ApiClient } from "../backendApi/BackendApi";
 import {
   GET_ALL_USERS,
+  GET_CUSTOMER_PAGINATION,
   GET_PROJECT_PAGINATION,
   GET_PROJECT_STATUS_LIST,
   GET_USER_BY_ID,
@@ -19,6 +20,7 @@ import {
   UserData,
 } from "../../utilities/Interfaces/UserInterfaces";
 import { RoleEnum } from "../../utilities/enums/roleEnums";
+import { CreateCustomerData } from "../../utilities/Interfaces/CustomerInterface";
 
 /* login hooks */
 export const useLogin = (onSuccess: () => void) =>
@@ -112,4 +114,21 @@ export const useGetProjectStatusList = () =>
   useQuery({
     queryKey: [GET_PROJECT_STATUS_LIST],
     queryFn: () => ApiClient.getProjectStatusList(),
+  });
+
+/* Customer hooks */
+export const usePostCustomer = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (model: CreateCustomerData) => ApiClient.postCustomer(model),
+    onSuccess,
+  });
+
+export const useGetCustomerPagination = (
+  searchValue: string,
+  page: number,
+  pageSize: number,
+) =>
+  useQuery({
+    queryKey: [GET_CUSTOMER_PAGINATION, searchValue, page, pageSize],
+    queryFn: () => ApiClient.getCustomerPagination(searchValue, page, pageSize),
   });

@@ -8,11 +8,11 @@ using Fagprove.Models;
 using Microsoft.EntityFrameworkCore;
 using Fagprove.Utils.Enums;
 
-namespace Farprove.Controllers
+namespace Fagprove.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
 
     public class ProjectController : ControllerBase
     {

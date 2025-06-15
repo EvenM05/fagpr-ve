@@ -9,6 +9,7 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./utilities/themeOptions";
 import { AdminRoute, ProtectedRoute } from "./utilities/protectedRoute";
 import { UserOverview } from "./pages/UserOverview";
+import CustomerOverview from "./pages/CustomerOverview";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -27,7 +28,7 @@ export default function App() {
           element: <ProjectDashboard />,
         },
         {
-          path: "overview",
+          path: "projectoverview",
           element: <ProjectOverview />,
         },
         {
@@ -35,6 +36,14 @@ export default function App() {
           element: (
             <AdminRoute>
               <UserOverview />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "admin/customer",
+          element: (
+            <AdminRoute>
+              <CustomerOverview />
             </AdminRoute>
           ),
         },
