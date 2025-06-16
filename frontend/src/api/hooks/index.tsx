@@ -7,6 +7,7 @@ import { ApiClient } from "../backendApi/BackendApi";
 import {
   GET_ALL_USERS,
   GET_CUSTOMER_PAGINATION,
+  GET_PROJECT_MONTHLY_DATA,
   GET_PROJECT_PAGINATION,
   GET_PROJECT_STATUS_LIST,
   GET_USER_BY_ID,
@@ -114,6 +115,12 @@ export const useGetProjectStatusList = () =>
   useQuery({
     queryKey: [GET_PROJECT_STATUS_LIST],
     queryFn: () => ApiClient.getProjectStatusList(),
+  });
+
+export const useGetProjectMonthlyData = () =>
+  useQuery({
+    queryKey: [GET_PROJECT_MONTHLY_DATA],
+    queryFn: () => ApiClient.getProjectMonthlyData(),
   });
 
 /* Customer hooks */

@@ -8,6 +8,7 @@ import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
 import {
   PaginationBase,
   ProjectData,
+  ProjectMonthlyDataModel,
   ProjectStatusListData,
 } from "../../utilities/Interfaces/ProjectInterface";
 import {
@@ -74,6 +75,8 @@ export class ApiClient {
         page: page.toString(),
         pageSize: pageSize.toString(),
       });
+
+      console.log("roleId", roleId);
 
       if (roleId) {
         params.append("roleFilter", roleId.toString());
@@ -168,6 +171,19 @@ export class ApiClient {
       );
 
       const data: ProjectStatusListData = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting data: ", error);
+    }
+  }
+
+  static async getProjectMonthlyData() {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl + "Project/GetProjectMonthlyData",
+      );
+
+      const data: ProjectMonthlyDataModel[] = response.data;
       return data;
     } catch (error) {
       console.error("Error getting data: ", error);

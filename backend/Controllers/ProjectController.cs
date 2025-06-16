@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Fagprove.Models;
 using Microsoft.EntityFrameworkCore;
 using Fagprove.Utils.Enums;
+using Microsoft.Extensions.ObjectPool;
+using System.Globalization;
 
 namespace Fagprove.Controllers
 {
@@ -127,6 +129,7 @@ namespace Fagprove.Controllers
 
             var result = new
             {
+                totalProjects = await _appDbContext.Project.CountAsync(),
                 toDoProjects,
                 startedProjects,
                 completedProjects,
@@ -134,6 +137,31 @@ namespace Fagprove.Controllers
             };
 
             return Ok(result);
+        }
+
+        [HttpGet("GetProjectMonthlyData")]
+        public async Task<IActionResult> GetProjectMonthlyData()
+        {
+        var projects = _appDbContext.Project
+            .Select(p => new
+            {
+                Month = p.CreatedDate.Month,
+                Budget = p.Resources.Sum(r => r.TotalCost),
+            })
+            .ToList();
+
+        var grouped = projects
+            .GroupBy(p => p.Month)
+            .Select(g => new ProjectMonthlyDataModel
+            {
+                month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key),
+                projectCount = g.Count(),
+                projectBudget = g.Sum(x => x.Budget)
+            })
+            .OrderBy(x => DateTime.ParseExact(x.month, "MMMM", CultureInfo.CurrentCulture))
+            .ToList();
+
+        return Ok(grouped);
         }
     }
 }

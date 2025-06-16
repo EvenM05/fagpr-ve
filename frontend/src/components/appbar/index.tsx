@@ -11,6 +11,8 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  Tab,
+  Tabs,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -22,6 +24,14 @@ import {
 } from "../../utilities/localStorage";
 import { getRoleName } from "../../utilities/enums/roleEnums";
 import { useState } from "react";
+import img from "../../assets/logo.png";
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 export const Appbar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -42,49 +52,44 @@ export const Appbar = () => {
     navigate("/login");
   };
 
-  return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-      }}
-    >
-      <AppBar position="static">
-        <Toolbar>
-          <MenuOutlined />
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    navigate(newValue);
+  };
 
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <Stack
+        position="fixed"
+        direction="row"
+        sx={{
+          justifyContent: "space-between",
+          bgcolor: "#f3edf7",
+          padding: "0em 1em",
+          width: "100%",
+        }}
+      >
+        <Button startIcon={<img src={img} alt="logo" style={{ height: 30 }} />}>
           <Typography variant="h5" sx={{ flexGrow: 1 }}>
             Projex
           </Typography>
+        </Button>
 
-          <ButtonGroup sx={{ gap: "1em" }}>
-            <Button
-              onClick={() => navigate("/Dashboard")}
-              sx={{
-                float: "right",
-                backgroundColor: "transparent",
-                gap: "1em",
-                color: "white",
-                borderBottom: "1px solid",
-              }}
-            >
-              <Typography>Dashboard</Typography>
-            </Button>
-            <Button
-              onClick={() => navigate("/ProjectOverview")}
-              sx={{
-                float: "right",
-                backgroundColor: "transparent",
-                gap: "1em",
-                color: "white",
-                borderBottom: "1px solid",
-              }}
-            >
-              <Typography>Project overview</Typography>
-            </Button>
-          </ButtonGroup>
+        <Stack direction="row">
+          <Tabs
+            value={
+              ["/Dashboard", "/ProjectOverview"].includes(location.pathname)
+                ? location.pathname
+                : false
+            }
+            onChange={handleChange}
+          >
+            <Tab label="Dashboard" value="/Dashboard" {...a11yProps(0)} />
+            <Tab
+              label="Project overview"
+              value="/ProjectOverview"
+              {...a11yProps(1)}
+            />
+          </Tabs>
 
           <Button
             aria-haspopup="true"
@@ -134,8 +139,8 @@ export const Appbar = () => {
               <MenuItem onClick={handleLogOut}>Log out</MenuItem>
             </MenuList>
           </Menu>
-        </Toolbar>
-      </AppBar>
+        </Stack>
+      </Stack>
       <Box sx={{ flex: "1", width: "100%" }}>
         <Outlet />
       </Box>

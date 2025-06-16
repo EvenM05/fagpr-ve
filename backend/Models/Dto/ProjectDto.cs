@@ -38,4 +38,12 @@ namespace Fagprove.Models.Dto
         public StatusEnum statusEnum { get; set; }
         public Guid UpdatedUserId { get; set; }
     }
+
+    public class ProjectMonthlyDataModel
+    {
+        public string month { get; set; }
+        public int projectCount { get; set; }
+        public int projectBudget { get; set; }
+    }
+    
 }

@@ -21,8 +21,15 @@ export interface ProjectData {
 }
 
 export interface ProjectStatusListData {
+  totalProjects: number;
   toDoProjects: number;
   startedProjects: number;
   completedProjects: number;
   cancelledProjects: number;
+}
+
+export interface ProjectMonthlyDataModel {
+  month: string;
+  projectCount: number;
+  projectBudget: number;
 }

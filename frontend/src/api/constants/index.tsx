@@ -7,6 +7,7 @@ export const GET_USER_ROLE_DATA = ["GetUserRoleData"];
 /* Project constants */
 export const GET_PROJECT_PAGINATION = ["GetProjectPagination"];
 export const GET_PROJECT_STATUS_LIST = ["GetProjectStatusList"];
+export const GET_PROJECT_MONTHLY_DATA = ["GetProjectMonthlyData"];
 
 /* Customer constants */
 export const GET_CUSTOMER_PAGINATION = ["GetCustomerPagination"];

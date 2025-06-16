@@ -81,7 +81,6 @@ export default function CustomerOverview() {
     pageSize,
   );
 
-  // Restore focus after re-render if needed
   useEffect(() => {
     if (shouldMaintainFocus.current && searchInputRef.current) {
       searchInputRef.current.focus();
@@ -156,15 +155,14 @@ export default function CustomerOverview() {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    shouldMaintainFocus.current = true; // Mark that we want to maintain focus
+    shouldMaintainFocus.current = true;
     setSearchValue(event.target.value);
-    setPage(1); // Reset to first page when searching
+    setPage(1);
   };
 
   const handleClearSearch = () => {
     setSearchValue("");
     setPage(1);
-    // Focus the search input after clearing
     setTimeout(() => {
       if (searchInputRef.current) {
         searchInputRef.current.focus();
@@ -216,7 +214,6 @@ export default function CustomerOverview() {
         </Typography>
       </Box>
 
-      {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Card
@@ -606,7 +603,7 @@ export default function CustomerOverview() {
               // startIcon={loading ? <CircularProgress size={20} /> : null}
             >
               {/* {loading ? "Saving..." : editingCustomer ? "Update" : "Add"}{" "} */}
-              Customer
+              Save
             </Button>
           </DialogActions>
         </form>
