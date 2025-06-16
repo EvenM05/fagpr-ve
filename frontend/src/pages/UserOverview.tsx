@@ -472,7 +472,6 @@ export const UserOverview = () => {
         </TableContainer>
       </Container>
 
-      {/* Results Summary */}
       {userData?.totalItems > 0 && (
         <Box mt={2}>
           <Typography variant="body2" color="textSecondary">

@@ -86,7 +86,6 @@ export const CreateUserDialog = (props: CreateUserDialogProps) => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent sx={{ px: 3, py: 2 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Name Field */}
             <Controller
               name="name"
               control={control}
@@ -101,7 +100,6 @@ export const CreateUserDialog = (props: CreateUserDialogProps) => {
               )}
             />
 
-            {/* Email */}
             <Controller
               name="email"
               control={control}
@@ -117,7 +115,6 @@ export const CreateUserDialog = (props: CreateUserDialogProps) => {
               )}
             />
 
-            {/* Password */}
             <Controller
               name="password"
               control={control}
@@ -133,7 +130,6 @@ export const CreateUserDialog = (props: CreateUserDialogProps) => {
               )}
             />
 
-            {/* Role */}
             <Controller
               name="roleId"
               control={control}

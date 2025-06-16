@@ -317,7 +317,6 @@ export default function CustomerOverview() {
               </Button>
             </Box>
 
-            {/* Search Bar */}
             <Box sx={{ mb: 3 }}>
               <TextField
                 inputRef={searchInputRef}
@@ -352,7 +351,6 @@ export default function CustomerOverview() {
               />
             </Box>
 
-            {/* Results Summary */}
             <Box
               sx={{
                 mb: 2,
@@ -469,7 +467,6 @@ export default function CustomerOverview() {
               </Table>
             </TableContainer>
 
-            {/* Pagination */}
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
               <Pagination
                 // count={customerData.totalPages}
@@ -489,7 +486,6 @@ export default function CustomerOverview() {
           </CardContent>
         </Card>
 
-        {/* Add/Edit Customer Dialog */}
         <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogTitle sx={{ pb: 1 }}>
@@ -574,13 +570,7 @@ export default function CustomerOverview() {
               <Button onClick={handleCloseDialog} variant="outlined">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ ml: 1 }}
-                // startIcon={loading ? <CircularProgress size={20} /> : null}
-              >
-                {/* {loading ? "Saving..." : editingCustomer ? "Update" : "Add"}{" "} */}
+              <Button type="submit" variant="contained" sx={{ ml: 1 }}>
                 Save
               </Button>
             </DialogActions>

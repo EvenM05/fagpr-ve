@@ -659,7 +659,6 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
               </Paper>
             </Stack>
 
-            {/* Project Team */}
             <Paper sx={{ p: 3, borderRadius: 2 }}>
               <Typography
                 variant="h6"
@@ -731,7 +730,6 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
               </Box>
             </Paper>
 
-            {/* Project Dates */}
             <Paper sx={{ p: 3, mt: 2, borderRadius: 2 }}>
               <Typography
                 variant="h6"
