@@ -7,6 +7,8 @@ export const theme = createTheme({
         root: {
           textTransform: "none",
           color: "black",
+          backgroundColor: "#ebebeb",
+          borderRadius: "2em",
         },
       },
     },

@@ -1,7 +1,20 @@
-import { RoleEnum } from "../enums/roleEnums";
 import { StatusEnum } from "../enums/statusEnums";
 import { ResourceData } from "./ResourceInterface";
 import { UserData } from "./UserInterfaces";
+
+export interface CreateProjectData {
+  name: string;
+  description: string;
+  createdUserId: string;
+}
+export interface UpdateProjectStatus {
+  status: StatusEnum;
+  updatedUserId: string;
+}
+
+export interface EditProjectDescriptionData {
+  description: string;
+}
 
 export interface PaginationBase<T> {
   items: T[];

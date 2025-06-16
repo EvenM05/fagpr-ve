@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -8,82 +8,49 @@ import {
   Chip,
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
-  Fab,
   Avatar,
   Divider,
   Paper,
-  Alert,
-  Stack,
   Container,
   IconButton,
   Tooltip,
   LinearProgress,
-  CardActions,
-  Skeleton,
 } from "@mui/material";
 import {
   Add as AddIcon,
   AccessTime as TimeIcon,
   AttachMoney as MoneyIcon,
-  Edit as EditIcon,
-  Visibility as ViewIcon,
   FilterList as FilterIcon,
   Search as SearchIcon,
   TrendingUp as TrendingUpIcon,
+  Add,
 } from "@mui/icons-material";
-import { useForm, Controller } from "react-hook-form";
-import { useGetProjectPagination, useGetProjectStatusList } from "../api/hooks";
-import { StatusEnum } from "../utilities/enums/statusEnums";
+import { useForm } from "react-hook-form";
+import {
+  useGetProjectPagination,
+  useGetProjectStatusList,
+  usePostProject,
+} from "../api/hooks";
+import {
+  getStatusColor,
+  getStatusName,
+  StatusEnum,
+} from "../utilities/enums/statusEnums";
 import { ProjectData } from "../utilities/Interfaces/ProjectInterface";
 import { ResourceData } from "../utilities/Interfaces/ResourceInterface";
 import useDebounce from "../utilities/useDebounce";
-
-const getStatusColor = (
-  status: StatusEnum,
-):
-  | "default"
-  | "primary"
-  | "secondary"
-  | "error"
-  | "info"
-  | "success"
-  | "warning" => {
-  switch (status) {
-    case StatusEnum.ToDo:
-      return "default";
-    case StatusEnum.InProgress:
-      return "info";
-    case StatusEnum.Completed:
-      return "success";
-    case StatusEnum.Cancelled:
-      return "error";
-    default:
-      return "default";
-  }
-};
-
-const getStatusLabel = (status: StatusEnum): string => {
-  switch (status) {
-    case StatusEnum.ToDo:
-      return "To Do";
-    case StatusEnum.InProgress:
-      return "In Progress";
-    case StatusEnum.Completed:
-      return "Completed";
-    case StatusEnum.Cancelled:
-      return "Cancelled";
-    default:
-      return "Unknown";
-  }
-};
+import { ProjectViewDialog } from "../components/projectViewDialog";
+import {
+  GET_PROJECT_PAGINATION,
+  GET_PROJECT_STATUS_LIST,
+} from "../api/constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { retrieveFromStorage } from "../utilities/localStorage";
 
 interface ProjectFormData {
   name: string;
@@ -94,24 +61,33 @@ interface ProjectFormData {
 }
 
 const ProjectOverview: React.FC = () => {
-  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
-    null,
-  );
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
   const [sortOrder, setSortOrder] = useState("desc");
-  const [statusFilter, setStatusFilter] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<number | undefined>(
+    undefined,
+  );
   const [searchValue, setSearchValue] = useState("");
-
   const debouncedSearch = useDebounce(searchValue, 500);
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: [GET_PROJECT_PAGINATION],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [GET_PROJECT_STATUS_LIST],
+    });
+  };
+
+  const { mutateAsync: createProject } = usePostProject(onSuccess);
 
   const { data: projectStatusData } = useGetProjectStatusList();
-
   const { data: projectData, isLoading: projectLoading } =
     useGetProjectPagination(
       debouncedSearch,
@@ -136,10 +112,20 @@ const ProjectOverview: React.FC = () => {
     },
   });
 
+  const handleCreateProject = () => {
+    const userId = retrieveFromStorage("userId");
+    if (userId) {
+      createProject({
+        name: "New project",
+        description: "",
+        createdUserId: userId,
+      });
+    }
+  };
+
   const handleOpenDialog = (project?: ProjectData) => {
     if (project) {
-      setSelectedProject(project);
-      setIsEditing(true);
+      setSelectedProjectId(project.id);
       reset({
         name: project.name,
         description: project.description,
@@ -148,11 +134,10 @@ const ProjectOverview: React.FC = () => {
         updatedUserId: project.updatedUser.id,
       });
     } else {
-      setSelectedProject(null);
-      setIsEditing(false);
+      setSelectedProjectId("");
       reset();
     }
-    setIsDialogOpen(true);
+    setDialogOpen(true);
   };
 
   const calculateTotalCost = (resources: ResourceData[]): number => {
@@ -183,7 +168,7 @@ const ProjectOverview: React.FC = () => {
       sx={{
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         paddingTop: "4em",
-        height: "100vh",
+        height: "95vh",
       }}
     >
       <Container maxWidth="xl" sx={{ pt: 4, pb: 6 }}>
@@ -204,7 +189,8 @@ const ProjectOverview: React.FC = () => {
                   fontWeight: 700,
                   color: "grey.900",
                   mb: 1,
-                  background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+                  background:
+                    "linear-gradient(135deg,rgb(255, 255, 255),rgb(110, 110, 110))",
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -220,7 +206,7 @@ const ProjectOverview: React.FC = () => {
               <Tooltip title="Toggle Filters">
                 <IconButton
                   onClick={() => setShowFilters(!showFilters)}
-                  color={showFilters ? "primary" : "default"}
+                  color={showFilters ? "info" : "default"}
                   sx={{
                     bgcolor: showFilters ? "primary.50" : "transparent",
                     "&:hover": { bgcolor: "primary.100" },
@@ -229,95 +215,80 @@ const ProjectOverview: React.FC = () => {
                   <FilterIcon />
                 </IconButton>
               </Tooltip>
+
+              <Button startIcon={<Add />} onClick={handleCreateProject}>
+                <Typography>Create project</Typography>
+              </Button>
             </Box>
           </Box>
 
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Paper
-                sx={{
-                  p: 2,
-                  bgcolr: "primary.50",
-                  border: "1px solid",
-                  borderColor: "primary.100",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color: "primary.main" }}
-                >
-                  {projectStatusData?.totalProjects || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Projects
-                </Typography>
-              </Paper>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: 700, color: "primary.main" }}
+                  >
+                    {projectStatusData?.totalProjects || 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Total Projects
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: 700, color: "success.main" }}
+                  >
+                    {projectData?.items.filter(
+                      (p) => p.status === StatusEnum.Completed,
+                    ).length || 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Completed
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Paper
-                sx={{
-                  p: 2,
-                  bgcolor: "success.50",
-                  border: "1px solid",
-                  borderColor: "success.100",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color: "success.main" }}
-                >
-                  {projectData?.items.filter(
-                    (p) => p.status === StatusEnum.Completed,
-                  ).length || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Completed
-                </Typography>
-              </Paper>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: 700, color: "info.main" }}
+                  >
+                    {projectData?.items.filter(
+                      (p) => p.status === StatusEnum.InProgress,
+                    ).length || 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    In Progress
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Paper
-                sx={{
-                  p: 2,
-                  bgcolor: "info.50",
-                  border: "1px solid",
-                  borderColor: "info.100",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color: "info.main" }}
-                >
-                  {projectData?.items.filter(
-                    (p) => p.status === StatusEnum.InProgress,
-                  ).length || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  In Progress
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Paper
-                sx={{
-                  p: 2,
-                  bgcolor: "warning.50",
-                  border: "1px solid",
-                  borderColor: "warning.100",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color: "warning.main" }}
-                >
-                  {projectData?.items.filter(
-                    (p) => p.status === StatusEnum.ToDo,
-                  ).length || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  To Do
-                </Typography>
-              </Paper>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h4"
+                    sx={{ fontWeight: 700, color: "warning.main" }}
+                  >
+                    {projectData?.items.filter(
+                      (p) => p.status === StatusEnum.ToDo,
+                    ).length || 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    To Do
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Box>
@@ -340,7 +311,7 @@ const ProjectOverview: React.FC = () => {
               Filters & Search
             </Typography>
             <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 12, md: 4 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   fullWidth
                   placeholder="Search projects..."
@@ -358,7 +329,7 @@ const ProjectOverview: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <FormControl fullWidth>
                   <InputLabel>Status Filter</InputLabel>
                   <Select
@@ -367,7 +338,7 @@ const ProjectOverview: React.FC = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                     sx={{ borderRadius: 2 }}
                   >
-                    <MenuItem value={0}>All Statuses</MenuItem>
+                    <MenuItem value={undefined}>All Statuses</MenuItem>
                     <MenuItem value={StatusEnum.ToDo}>To Do</MenuItem>
                     <MenuItem value={StatusEnum.InProgress}>
                       In Progress
@@ -377,7 +348,7 @@ const ProjectOverview: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <FormControl fullWidth>
                   <InputLabel>Sort Order</InputLabel>
                   <Select
@@ -432,7 +403,13 @@ const ProjectOverview: React.FC = () => {
                     },
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                  <CardContent
+                    sx={{ flexGrow: 1, p: 3 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenDialog(project);
+                    }}
+                  >
                     <Box sx={{ mb: 2 }}>
                       <Box
                         sx={{
@@ -459,7 +436,7 @@ const ProjectOverview: React.FC = () => {
                           {project.name}
                         </Typography>
                         <Chip
-                          label={getStatusLabel(project.status)}
+                          label={getStatusName(project.status)}
                           color={getStatusColor(project.status)}
                           size="small"
                           sx={{
@@ -586,26 +563,6 @@ const ProjectOverview: React.FC = () => {
                       </Typography>
                     </Box>
                   </CardContent>
-
-                  <CardActions sx={{ p: 2, pt: 0, justifyContent: "flex-end" }}>
-                    <Tooltip title="View Details">
-                      <IconButton size="small" sx={{ color: "primary.main" }}>
-                        <ViewIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit Project">
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenDialog(project);
-                        }}
-                        sx={{ color: "grey.600" }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </CardActions>
                 </Card>
               </Grid>
             ))
@@ -638,6 +595,21 @@ const ProjectOverview: React.FC = () => {
           )}
         </Grid>
       </Container>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        fullWidth
+        maxWidth="lg"
+        PaperProps={{
+          sx: { borderRadius: 3, maxHeight: "90vh" },
+        }}
+      >
+        <ProjectViewDialog
+          projectId={selectedProjectId}
+          handleClose={() => setDialogOpen(false)}
+        />
+      </Dialog>
     </Box>
   );
 };

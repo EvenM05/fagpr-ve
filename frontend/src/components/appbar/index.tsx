@@ -63,7 +63,7 @@ export const Appbar = () => {
         direction="row"
         sx={{
           justifyContent: "space-between",
-          bgcolor: "#f3edf7",
+          bgcolor: "#ebebeb",
           padding: "0em 1em",
           width: "100%",
         }}

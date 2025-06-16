@@ -187,8 +187,8 @@ export default function ProjectDashboard() {
     <Box
       sx={{
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        p: 3,
-        paddingTop: "5em",
+        paddingTop: "4em",
+        minHeight: "95vh",
       }}
     >
       <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
@@ -370,7 +370,7 @@ export default function ProjectDashboard() {
               sx={{
                 background: "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(10px)",
-                height: "400px",
+                height: "350px",
               }}
             >
               <CardContent sx={{ height: "100%" }}>
@@ -378,7 +378,7 @@ export default function ProjectDashboard() {
                   Monthly Project Trends
                 </Typography>
                 <LineChart
-                  height={320}
+                  height={270}
                   xAxis={[
                     {
                       scaleType: "point",
@@ -402,7 +402,7 @@ export default function ProjectDashboard() {
               sx={{
                 background: "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(10px)",
-                height: "400px",
+                height: "350px",
               }}
             >
               <CardContent sx={{ height: "100%" }}>
@@ -421,7 +421,7 @@ export default function ProjectDashboard() {
                       },
                     },
                   ]}
-                  height={320}
+                  height={270}
                 />
               </CardContent>
             </Card>

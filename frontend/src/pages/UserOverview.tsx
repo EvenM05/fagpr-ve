@@ -24,6 +24,7 @@ import {
   Dialog,
   InputAdornment,
   Button,
+  Container,
 } from "@mui/material";
 import {
   Edit as EditIcon,
@@ -174,296 +175,302 @@ export const UserOverview = () => {
   }
 
   return (
-    <Box p={3}>
-      <Box
-        mb={3}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Typography variant="h4" component="h1">
-          User Management
-        </Typography>
-        <Tooltip title="Add New User">
-          <IconButton
-            color="primary"
-            onClick={handleAddUser}
-            sx={{
-              bgcolor: "primary.main",
-              color: "white",
-              "&:hover": { bgcolor: "primary.dark" },
-            }}
+    <Box
+      sx={{
+        paddingTop: "4em",
+        height: "95vh",
+      }}
+    >
+      <Container maxWidth="xl" sx={{ pt: 4, pb: 6 }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography
+            variant="h3"
+            component="h1"
+            gutterBottom
+            sx={{ fontWeight: "bold", color: "primary.main" }}
           >
-            <PersonAddIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
+            User Overview
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Manage your users and their information
+          </Typography>
+        </Box>
 
-      {/* Statistics Cards */}
-      <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Users
-              </Typography>
-              <Typography variant="h4">{userRoleData.total}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Regular Users
-              </Typography>
-              <Typography variant="h4" color="text.secondary">
-                {userRoleData.regularUser}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Project Managers
-              </Typography>
-              <Typography variant="h4" color="primary">
-                {userRoleData?.pmUser}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Administrators
-              </Typography>
-              <Typography variant="h4" color="error">
-                {userRoleData?.adminUser}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Box mb={3}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TextField
-              fullWidth
-              label="Search users"
-              variant="outlined"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search by name or email..."
-            />
+        <Grid container spacing={3} mb={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                  {userRoleData.total}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Total Users
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Filter by Role</InputLabel>
-              <Select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                label="Filter by Role"
-              >
-                <MenuItem value={undefined}>All Roles</MenuItem>
-                <MenuItem value={RoleEnum.User}>Users</MenuItem>
-                <MenuItem value={RoleEnum.ProjectManager}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card>
+              <CardContent>
+                <Typography
+                  variant="h4"
+                  color="text.secondary"
+                  sx={{ fontWeight: 700 }}
+                >
+                  {userRoleData.regularUser}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Regular Users
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card>
+              <CardContent>
+                <Typography
+                  variant="h4"
+                  color="primary"
+                  sx={{ fontWeight: 700 }}
+                >
+                  {userRoleData?.pmUser}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
                   Project Managers
-                </MenuItem>
-                <MenuItem value={RoleEnum.Admin}>Administrators</MenuItem>
-              </Select>
-            </FormControl>
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h4" color="error" sx={{ fontWeight: 700 }}>
+                  {userRoleData?.adminUser}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Administrators
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
-      </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography fontWeight="bold">Name</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Email</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Role</Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography fontWeight="bold">Actions</Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {userData?.totalItems === 0 ? (
+        <Box mb={3}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label="Search users"
+                variant="outlined"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="Search by name or email..."
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Filter by Role</InputLabel>
+                <Select
+                  value={roleFilter}
+                  onChange={(e) => setRoleFilter(e.target.value)}
+                  label="Filter by Role"
+                >
+                  <MenuItem value={undefined}>All Roles</MenuItem>
+                  <MenuItem value={RoleEnum.User}>Users</MenuItem>
+                  <MenuItem value={RoleEnum.ProjectManager}>
+                    Project Managers
+                  </MenuItem>
+                  <MenuItem value={RoleEnum.Admin}>Administrators</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={4} align="center">
-                  <Typography variant="body1" color="textSecondary">
-                    {searchValue || roleFilter !== 0
-                      ? "No users match your search criteria."
-                      : "No users found."}
-                  </Typography>
+                <TableCell>
+                  <Typography fontWeight="bold">Name</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontWeight="bold">Email</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontWeight="bold">Role</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography fontWeight="bold">Actions</Typography>
                 </TableCell>
               </TableRow>
-            ) : (
-              userData?.items.map((user: UserData) => {
-                return editUser === user.id ? (
-                  <>
-                    <TableRow
-                      key={user.id}
-                      hover
-                      onSubmit={handleSubmit(onSubmit)}
-                    >
-                      <TableCell>
-                        <Controller
-                          name="name"
-                          control={control}
-                          rules={{
-                            required: "Name is required",
-                          }}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              label="Name"
-                              type="name"
-                              error={!!errors.name}
-                              helperText={errors.name?.message}
-                            />
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Controller
-                          name="password"
-                          control={control}
-                          rules={{
-                            required: "Password is required",
-                          }}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              label="Password"
-                              type={showPassword ? "text" : "password"}
-                              error={!!errors.password}
-                              helperText={errors.password?.message}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Lock color="action" />
-                                  </InputAdornment>
-                                ),
-                                endAdornment: (
-                                  <InputAdornment position="end">
-                                    <IconButton
-                                      onClick={() =>
-                                        setShowPassword(!showPassword)
-                                      }
-                                      edge="end"
-                                    >
-                                      {showPassword ? (
-                                        <VisibilityOff />
-                                      ) : (
-                                        <Visibility />
-                                      )}
-                                    </IconButton>
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Controller
-                          name="roleId"
-                          control={control}
-                          render={({ field }) => (
-                            <FormControl fullWidth error={!!errors.roleId}>
-                              <InputLabel>Role</InputLabel>
-                              <Select {...field} label="Role">
-                                <MenuItem value={RoleEnum.User}>
-                                  {getRoleName(RoleEnum.User)}
-                                </MenuItem>
-                                <MenuItem value={RoleEnum.ProjectManager}>
-                                  {getRoleName(RoleEnum.ProjectManager)}
-                                </MenuItem>
-                                <MenuItem value={RoleEnum.Admin}>
-                                  {getRoleName(RoleEnum.Admin)}
-                                </MenuItem>
-                              </Select>
-                            </FormControl>
-                          )}
-                        />
-                      </TableCell>
+            </TableHead>
+            <TableBody>
+              {userData?.totalItems === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body1" color="textSecondary">
+                      {searchValue || roleFilter !== 0
+                        ? "No users match your search criteria."
+                        : "No users found."}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                userData?.items.map((user: UserData) => {
+                  return editUser === user.id ? (
+                    <>
+                      <TableRow
+                        key={user.id}
+                        hover
+                        onSubmit={handleSubmit(onSubmit)}
+                      >
+                        <TableCell>
+                          <Controller
+                            name="name"
+                            control={control}
+                            rules={{
+                              required: "Name is required",
+                            }}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Name"
+                                type="name"
+                                error={!!errors.name}
+                                helperText={errors.name?.message}
+                              />
+                            )}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Controller
+                            name="password"
+                            control={control}
+                            rules={{
+                              required: "Password is required",
+                            }}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Password"
+                                type={showPassword ? "text" : "password"}
+                                error={!!errors.password}
+                                helperText={errors.password?.message}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <Lock color="action" />
+                                    </InputAdornment>
+                                  ),
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        onClick={() =>
+                                          setShowPassword(!showPassword)
+                                        }
+                                        edge="end"
+                                      >
+                                        {showPassword ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </IconButton>
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Controller
+                            name="roleId"
+                            control={control}
+                            render={({ field }) => (
+                              <FormControl fullWidth error={!!errors.roleId}>
+                                <InputLabel>Role</InputLabel>
+                                <Select {...field} label="Role">
+                                  <MenuItem value={RoleEnum.User}>
+                                    {getRoleName(RoleEnum.User)}
+                                  </MenuItem>
+                                  <MenuItem value={RoleEnum.ProjectManager}>
+                                    {getRoleName(RoleEnum.ProjectManager)}
+                                  </MenuItem>
+                                  <MenuItem value={RoleEnum.Admin}>
+                                    {getRoleName(RoleEnum.Admin)}
+                                  </MenuItem>
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        </TableCell>
 
+                        <TableCell align="right">
+                          <Button onClick={() => setEditUser("")}>
+                            <Typography>Cancel</Typography>
+                          </Button>
+
+                          <Button
+                            variant="contained"
+                            sx={{ ml: "0.5em" }}
+                            onClick={handleSubmit(onSubmit)}
+                          >
+                            <Typography>Save</Typography>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ) : (
+                    <TableRow key={user.id} hover>
+                      <TableCell>
+                        <Typography variant="body1" fontWeight="medium">
+                          {user.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="textSecondary">
+                          {user.email}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={getRoleLabel(user.roleId)}
+                          color={getRoleColor(user.roleId)}
+                          size="small"
+                        />
+                      </TableCell>
                       <TableCell align="right">
-                        <Button onClick={() => setEditUser("")}>
-                          <Typography>Cancel</Typography>
-                        </Button>
-
-                        <Button
-                          variant="contained"
-                          sx={{ ml: "0.5em" }}
-                          onClick={handleSubmit(onSubmit)}
-                        >
-                          <Typography>Save</Typography>
-                        </Button>
+                        <Tooltip title="Edit User">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleEditUser(user.id)}
+                            color="primary"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete User">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteUser(user.id)}
+                            color="error"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
-                  </>
-                ) : (
-                  <TableRow key={user.id} hover>
-                    <TableCell>
-                      <Typography variant="body1" fontWeight="medium">
-                        {user.name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="textSecondary">
-                        {user.email}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={getRoleLabel(user.roleId)}
-                        color={getRoleColor(user.roleId)}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Edit User">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleEditUser(user.id)}
-                          color="primary"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete User">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDeleteUser(user.id)}
-                          color="error"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Container>
 
       {/* Results Summary */}
       {userData?.totalItems > 0 && (

@@ -61,7 +61,7 @@ namespace Fagprove.Controllers
             {
                 var project = await _appDbContext.Project.FindAsync(id);
 
-                project.Status = model.statusEnum;
+                project.Status = model.status;
                 project.UpdatedUserId = model.UpdatedUserId;
                 project.UpdatedDate = DateTime.UtcNow;
 
@@ -70,6 +70,25 @@ namespace Fagprove.Controllers
                 return Ok(project);
             }
             return BadRequest(model);
+        }
+
+        [HttpGet("GetProjectById")]
+        public async Task<IActionResult> GetProjectById(Guid id)
+        {
+            var project = await _appDbContext.Project.Where(p => p.Id == id).Select(p => new ProjectPaginationDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Status = p.Status,
+                CreatedDate = p.CreatedDate,
+                UpdatedDate = p.UpdatedDate,
+                CreatedUser = p.CreatedUser,
+                UpdatedUser = p.UpdatedUser,
+                Resources = p.Resources
+            }).FirstOrDefaultAsync();
+
+            return Ok(project);   
         }
 
         [HttpGet("GetProjects")]
@@ -84,11 +103,11 @@ namespace Fagprove.Controllers
 
             if (sortOrder == "asc")
             {
-                query = query.OrderBy(c => c.CreatedDate);
+                query = query.OrderBy(c => c.UpdatedDate);
             }
             else if (sortOrder == "desc")
             {
-                query = query.OrderByDescending(c => c.CreatedDate);
+                query = query.OrderByDescending(c => c.UpdatedDate);
             }
             else
             {
@@ -143,6 +162,7 @@ namespace Fagprove.Controllers
         public async Task<IActionResult> GetProjectMonthlyData()
         {
         var projects = _appDbContext.Project
+        .Where(p => p.CreatedDate.Month == 2025)
             .Select(p => new
             {
                 Month = p.CreatedDate.Month,

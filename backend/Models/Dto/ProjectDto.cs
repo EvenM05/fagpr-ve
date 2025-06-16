@@ -35,7 +35,7 @@ namespace Fagprove.Models.Dto
 
     public class StatusUpdateDto
     {
-        public StatusEnum statusEnum { get; set; }
+        public StatusEnum status { get; set; }
         public Guid UpdatedUserId { get; set; }
     }
 

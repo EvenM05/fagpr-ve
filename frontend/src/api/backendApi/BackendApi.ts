@@ -6,11 +6,14 @@ import {
 } from "../../utilities/Interfaces/CustomerInterface";
 import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
 import {
+  CreateProjectData,
   PaginationBase,
   ProjectData,
   ProjectMonthlyDataModel,
   ProjectStatusListData,
+  UpdateProjectStatus,
 } from "../../utilities/Interfaces/ProjectInterface";
+import { CreateResourceData } from "../../utilities/Interfaces/ResourceInterface";
 import {
   CreateUserData,
   UpdateUserModel,
@@ -144,23 +147,74 @@ export class ApiClient {
   }
 
   /* Project api */
+  static async postProject(model: CreateProjectData) {
+    try {
+      const response = await http.post(
+        ApiClient.baseUrl + "Project/CreateProject",
+        model,
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error creating project: ", error);
+    }
+  }
+
+  static async updateProjectStatus(
+    projectId: string,
+    model: UpdateProjectStatus,
+  ) {
+    try {
+      const response = await http.put(
+        ApiClient.baseUrl + `Project/UpdateProjectStatus?id=${projectId}`,
+        model,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating project status: ", error);
+    }
+  }
+
+  static async GetProjectById(id: string) {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl + `Project/GetProjectById?id=${id}`,
+      );
+
+      const data: ProjectData = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting project data: ", error);
+    }
+  }
+
   static async getProjectPagination(
     searchValue: string,
     page: number,
     pageSize: number,
     sortOrder: string,
-    status: StatusEnum,
+    status: StatusEnum | undefined,
   ) {
     try {
+      const params = new URLSearchParams({
+        searchValue,
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+        sortOrder,
+      });
+
+      if (status !== undefined) {
+        params.append("statusFilter", status.toString());
+      }
+
       const response = await http.get(
-        ApiClient.baseUrl +
-          `Project/GetProjects?searchValue=${searchValue}&page=${page}&pageSize=${pageSize}&sortOrder=${sortOrder}&statusFilter=${status}`,
+        `${ApiClient.baseUrl}Project/GetProjects?${params.toString()}`,
       );
 
       const data: PaginationBase<ProjectData> = response.data;
       return data;
     } catch (error) {
-      console.error("Error getting data: ", error);
+      console.error("Error getting project data: ", error);
     }
   }
 
@@ -218,6 +272,20 @@ export class ApiClient {
       return data;
     } catch (error) {
       console.error("Error getting customer: ", error);
+    }
+  }
+
+  /* Resource api */
+  static async postResource(model: CreateResourceData) {
+    try {
+      const response = await http.post(
+        ApiClient.baseUrl + "Resource/CreateResource",
+        model,
+      );
+
+      return response;
+    } catch (error) {
+      console.error("Error creating resource: ", error);
     }
   }
 }

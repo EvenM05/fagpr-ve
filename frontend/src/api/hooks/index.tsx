@@ -7,6 +7,7 @@ import { ApiClient } from "../backendApi/BackendApi";
 import {
   GET_ALL_USERS,
   GET_CUSTOMER_PAGINATION,
+  GET_PROJECT_BY_ID,
   GET_PROJECT_MONTHLY_DATA,
   GET_PROJECT_PAGINATION,
   GET_PROJECT_STATUS_LIST,
@@ -22,6 +23,11 @@ import {
 } from "../../utilities/Interfaces/UserInterfaces";
 import { RoleEnum } from "../../utilities/enums/roleEnums";
 import { CreateCustomerData } from "../../utilities/Interfaces/CustomerInterface";
+import { CreateResourceData } from "../../utilities/Interfaces/ResourceInterface";
+import {
+  CreateProjectData,
+  UpdateProjectStatus,
+} from "../../utilities/Interfaces/ProjectInterface";
 
 /* login hooks */
 export const useLogin = (onSuccess: () => void) =>
@@ -85,12 +91,31 @@ export const useDeleteUser = (onSuccess: () => void) =>
   });
 
 /* Project hooks */
+export const usePostProject = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (model: CreateProjectData) => ApiClient.postProject(model),
+    onSuccess,
+  });
+
+export const useChangeProjectStatus = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (data: { projectId: string; model: UpdateProjectStatus }) =>
+      ApiClient.updateProjectStatus(data.projectId, data.model),
+    onSuccess,
+  });
+
+export const useGetProjectById = (id: string) =>
+  useQuery({
+    queryKey: [GET_PROJECT_BY_ID, id],
+    queryFn: () => ApiClient.GetProjectById(id),
+  });
+
 export const useGetProjectPagination = (
   searchValue: string,
   page: number,
   pageSize: number,
   sortOrder: string,
-  status: StatusEnum,
+  status: StatusEnum | undefined,
 ) =>
   useQuery({
     queryKey: [
@@ -138,4 +163,11 @@ export const useGetCustomerPagination = (
   useQuery({
     queryKey: [GET_CUSTOMER_PAGINATION, searchValue, page, pageSize],
     queryFn: () => ApiClient.getCustomerPagination(searchValue, page, pageSize),
+  });
+
+/* Resource hooks */
+export const usePostResource = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (data: CreateResourceData) => ApiClient.postResource(data),
+    onSuccess,
   });

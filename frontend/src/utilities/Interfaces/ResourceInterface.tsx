@@ -8,3 +8,10 @@ export interface ResourceData {
   totalCost: number;
   projectId: string;
 }
+
+export interface CreateResourceData {
+  estimateType: EstimateEnum;
+  timeHours: number;
+  timeCost: number;
+  projectId: string;
+}
