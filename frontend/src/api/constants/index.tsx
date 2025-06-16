@@ -12,3 +12,4 @@ export const GET_PROJECT_MONTHLY_DATA = ["GetProjectMonthlyData"];
 
 /* Customer constants */
 export const GET_CUSTOMER_PAGINATION = ["GetCustomerPagination"];
+export const GET_ALL_CUSTOMERS = ["GetAllCustomers"];

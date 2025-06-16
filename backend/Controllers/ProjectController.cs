@@ -52,21 +52,47 @@ namespace Fagprove.Controllers
             return BadRequest(model);
         }
 
-
-
-        [HttpPut("UpdateProjectStatus")]
-        public async Task<IActionResult> UpdateProjectStatus(Guid id, StatusUpdateDto model)
+        [HttpPut("UpdateProject")]
+        public async Task<IActionResult> UpdateProject(Guid id, UpdateProjectDto model)
         {
             if (ModelState.IsValid)
             {
                 var project = await _appDbContext.Project.FindAsync(id);
 
-                project.Status = model.status;
+                if (model.Name != null)
+                {
+                    project.Name = model.Name;
+                }
+                if (model.Description != null)
+                {
+                    project.Description = model.Description;
+                }
+                if (model.Status != null)
+                {
+                    project.Status = model.Status;
+                }
+
+                project.UpdatedUserId = model.UpdatedUserId;
+
+                await _appDbContext.SaveChangesAsync();
+                return Ok(project);
+            }
+
+            return BadRequest(model);
+        }
+
+        [HttpPut("UpdateProjectCustomer")]
+        public async Task<IActionResult> UpdateProjectCustomer(Guid id, AddCustomerDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var project = await _appDbContext.Project.FindAsync(id);
+
+                project.CustomerId = model.CustomerId;
                 project.UpdatedUserId = model.UpdatedUserId;
                 project.UpdatedDate = DateTime.UtcNow;
 
                 await _appDbContext.SaveChangesAsync();
-
                 return Ok(project);
             }
             return BadRequest(model);
@@ -85,7 +111,8 @@ namespace Fagprove.Controllers
                 UpdatedDate = p.UpdatedDate,
                 CreatedUser = p.CreatedUser,
                 UpdatedUser = p.UpdatedUser,
-                Resources = p.Resources
+                Customer = p.Customer,
+                Resources = p.Resources,
             }).FirstOrDefaultAsync();
 
             return Ok(project);   
@@ -125,6 +152,7 @@ namespace Fagprove.Controllers
                 UpdatedDate = p.UpdatedDate,
                 CreatedUser = p.CreatedUser,
                 UpdatedUser = p.UpdatedUser,
+                Customer = p.Customer,
                 Resources = p.Resources
 
             }).ToListAsync();
@@ -162,7 +190,7 @@ namespace Fagprove.Controllers
         public async Task<IActionResult> GetProjectMonthlyData()
         {
         var projects = _appDbContext.Project
-        .Where(p => p.CreatedDate.Month == 2025)
+            .Where(p => p.CreatedDate.Year == 2025)
             .Select(p => new
             {
                 Month = p.CreatedDate.Month,

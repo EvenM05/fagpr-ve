@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace Fagprove.Models
 {
     public class Customer
@@ -10,7 +11,7 @@ namespace Fagprove.Models
         public string Name { get; set; }
 
         public string ContactMail { get; set; }
-    
+
         public int OrganizationNumber { get; set; }
-    }   
+    }
 }

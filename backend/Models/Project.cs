@@ -21,16 +21,21 @@ namespace Fagprove.Models
         public DateTime UpdatedDate { get; set; }
 
 
-        public Guid CreatedUserId {get; set; }
+        public Guid CreatedUserId { get; set; }
 
         [ForeignKey("CreatedUserId")]
         public User? CreatedUser { get; set; }
-        
-        public Guid UpdatedUserId {get; set; }
+
+        public Guid UpdatedUserId { get; set; }
 
         [ForeignKey("UpdatedUserId")]
         public User? UpdatedUser { get; set; }
 
         public ICollection<Resources>? Resources { get; set; }
+
+        public Guid? CustomerId { get; set; }
+
+        [ForeignKey("CustomerId")]
+        public Customer? Customer { get; set; }
     }
 }

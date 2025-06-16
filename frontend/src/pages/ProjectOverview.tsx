@@ -20,6 +20,7 @@ import {
   IconButton,
   Tooltip,
   LinearProgress,
+  Stack,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -29,6 +30,7 @@ import {
   Search as SearchIcon,
   TrendingUp as TrendingUpIcon,
   Add,
+  Business,
 } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import {
@@ -469,6 +471,7 @@ const ProjectOverview: React.FC = () => {
                     <Typography
                       variant="body2"
                       color="text.secondary"
+                      noWrap
                       sx={{
                         mb: 2,
                         lineHeight: 1.5,
@@ -519,6 +522,7 @@ const ProjectOverview: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
+                        mb: 2,
                       }}
                     >
                       <Box
@@ -552,15 +556,14 @@ const ProjectOverview: React.FC = () => {
                           {project.createdUser.name}
                         </Typography>
                       </Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
-                      >
-                        {new Date(project.updatedDate).toLocaleDateString(
-                          "no-nb",
-                        )}
-                      </Typography>
+                      {project.customer && (
+                        <Stack direction="row" alignItems="center" gap="0.5em">
+                          <Business />
+                          <Typography variant="caption">
+                            {project.customer.name}
+                          </Typography>
+                        </Stack>
+                      )}
                     </Box>
                   </CardContent>
                 </Card>
@@ -581,16 +584,14 @@ const ProjectOverview: React.FC = () => {
                   ? "Try adjusting your filters to see more projects."
                   : "Get started by creating your first project."}
               </Typography>
-              {!searchValue && !statusFilter && (
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={() => handleOpenDialog()}
-                  sx={{ mt: 1 }}
-                >
-                  Create Project
-                </Button>
-              )}
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => handleOpenDialog()}
+                sx={{ mt: 1 }}
+              >
+                Create Project
+              </Button>
             </Box>
           )}
         </Grid>

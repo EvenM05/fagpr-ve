@@ -66,5 +66,12 @@ namespace Fagprove
 
             return Ok(result);
         }
+        [HttpGet("GetAllCustomers")]
+        public async Task<IActionResult> GetAllCustomers()
+        {
+            var customer = await _appDbContext.Customers.ToListAsync();
+
+            return Ok(customer);
+        }
     }
 }

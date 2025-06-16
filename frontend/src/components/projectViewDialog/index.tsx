@@ -1,8 +1,6 @@
 import { useState } from "react";
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Grid,
   Chip,
@@ -17,12 +15,12 @@ import {
   Container,
   IconButton,
   LinearProgress,
-  Skeleton,
   TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   AccessTime as TimeIcon,
@@ -34,6 +32,8 @@ import {
   Timeline as TimelineIcon,
   Add,
   KeyboardTab,
+  Edit,
+  Business,
 } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -42,9 +42,11 @@ import {
   StatusEnum,
 } from "../../utilities/enums/statusEnums";
 import {
-  useChangeProjectStatus,
+  useChangeProjectCustomer,
+  useGetAllCustomers,
   useGetProjectById,
   usePostResource,
+  useUpdateProject,
 } from "../../api/hooks";
 import {
   CreateResourceData,
@@ -61,7 +63,10 @@ import {
 } from "../../api/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { retrieveFromStorage } from "../../utilities/localStorage";
-import { EditProjectDescriptionData } from "../../utilities/Interfaces/ProjectInterface";
+import {
+  UpdateProjectCustomerModel,
+  UpdateProjectModel,
+} from "../../utilities/Interfaces/ProjectInterface";
 
 interface ProjectViewDialogProps {
   projectId: string;
@@ -70,9 +75,13 @@ interface ProjectViewDialogProps {
 
 export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
   const { projectId, handleClose } = props;
+  const userId = retrieveFromStorage("userId");
+
   const [isCreatingResource, setIsCreatingResource] = useState<boolean>(false);
   const [isEditingDescription, setIsEditingDescription] =
     useState<boolean>(false);
+  const [isEditTitle, setIsEditTitle] = useState<boolean>(false);
+
   const queryClient = useQueryClient();
 
   const onSuccess = () => {
@@ -87,11 +96,12 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
     });
   };
 
-  const { data: projectData, isLoading: projectLoading } =
-    useGetProjectById(projectId);
+  const { data: projectData } = useGetProjectById(projectId);
+  const { data: customerData } = useGetAllCustomers();
 
   const { mutateAsync: createResource } = usePostResource(onSuccess);
-  const { mutateAsync: changeStatus } = useChangeProjectStatus(onSuccess);
+  const { mutateAsync: updateProject } = useUpdateProject(onSuccess);
+  const { mutateAsync: addCustomer } = useChangeProjectCustomer(onSuccess);
 
   const {
     control: resourceControl,
@@ -107,12 +117,14 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
   });
 
   const {
-    control: descriptionControl,
-    handleSubmit: descriptionHandleSubmit,
-    formState: { errors: descriptionErros },
-  } = useForm<EditProjectDescriptionData>({
+    control: updateProjectControl,
+    handleSubmit: updateProjectHandleSubmit,
+  } = useForm<UpdateProjectModel>({
     defaultValues: {
+      name: projectData?.name,
       description: projectData?.description,
+      status: projectData?.status,
+      updatedUserId: userId || "",
     },
   });
 
@@ -121,29 +133,53 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
     setIsCreatingResource(false);
   };
 
-  const submitEditDescription = async (data: EditProjectDescriptionData) => {
-    console.log(data);
+  const onSubmitProjectData = async (data: UpdateProjectModel) => {
+    const userId = retrieveFromStorage("userId");
+    if (projectData && userId) {
+      updateProject({
+        projectId: projectData.id,
+        model: {
+          name: data.name,
+          description: data.description,
+          status: data.status,
+          updatedUserId: userId,
+        },
+      });
+      setIsEditTitle(false);
+      setIsEditingDescription(false);
+    }
   };
 
-  const handleCreateResource = () => {
-    setIsCreatingResource(true);
+  const handleChangeStatus = () => {
+    if (projectData) {
+      onSubmitProjectData({
+        name: projectData.name,
+        description: projectData.description,
+        status: projectData.status + 1,
+        updatedUserId: userId || "",
+      });
+    }
+  };
+
+  const handleSetCustomer = (e: SelectChangeEvent) => {
+    const value = e.target.value;
+    const model: UpdateProjectCustomerModel = {
+      customerId: value,
+      updatedUserId: userId || "",
+    };
+    addCustomer({ projectId, model });
+  };
+
+  const handleEditTitle = () => {
+    setIsEditTitle(true);
   };
 
   const handleEditDescription = () => {
     setIsEditingDescription(true);
   };
 
-  const handleChangeStatus = () => {
-    const userId = retrieveFromStorage("userId");
-    if (projectData && userId) {
-      changeStatus({
-        projectId: projectData.id,
-        model: {
-          status: projectData?.status + 1,
-          updatedUserId: userId,
-        },
-      });
-    }
+  const handleCreateResource = () => {
+    setIsCreatingResource(true);
   };
 
   const calculateTotalCost = (resources: ResourceData[]): number => {
@@ -169,45 +205,12 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
     }
   };
 
-  // Loading skeleton
-  const LoadingSkeleton = () => (
-    <Grid container spacing={3}>
-      {[...Array(8)].map((_, index) => (
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={index}>
-          <Card sx={{ height: 320 }}>
-            <CardContent>
-              <Skeleton variant="text" width="80%" height={32} />
-              <Skeleton
-                variant="rectangular"
-                width={80}
-                height={24}
-                sx={{ mb: 2 }}
-              />
-              <Skeleton variant="text" width="100%" />
-              <Skeleton variant="text" width="90%" />
-              <Skeleton variant="text" width="60%" />
-              <Box
-                sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
-              >
-                <Skeleton variant="text" width={60} />
-                <Skeleton variant="text" width={80} />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  );
-
-  if (projectLoading) {
-    return (
-      <Box sx={{ minHeight: "100vh", bgcolor: "grey.50" }}>
-        <Container maxWidth="xl" sx={{ pt: 4, pb: 6 }}>
-          <LoadingSkeleton />
-        </Container>
-      </Box>
-    );
-  }
+  const formatOrgNumber = (raw: string | number): string =>
+    raw
+      .toString() // make sure it’s a string
+      .replace(/\D/g, "") // strip anything that isn’t a digit
+      .padStart(9, "0") // always show 9 digits
+      .replace(/(\d{3})(?=\d)/g, "$1 "); // 000 000 000
 
   if (!projectData) {
     return (
@@ -221,7 +224,7 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
 
   return (
     <>
-      <DialogTitle sx={{ pb: 2, pr: 6 }}>
+      <DialogTitle sx={{ pb: 2, pr: 6, p: "1em 1.5em" }}>
         <Box
           sx={{
             display: "flex",
@@ -230,9 +233,34 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
           }}
         >
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-              {projectData.name}
-            </Typography>
+            {isEditTitle ? (
+              <form onSubmit={updateProjectHandleSubmit(onSubmitProjectData)}>
+                <Stack direction="row" gap="1em" sx={{ pb: "1em" }}>
+                  <Controller
+                    name="name"
+                    control={updateProjectControl}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Project title"
+                        variant="filled"
+                        defaultValue={projectData.name}
+                      />
+                    )}
+                  />
+                  <Button onClick={() => setIsEditTitle(false)}>Cancel</Button>
+                  <Button type="submit">Save</Button>
+                </Stack>
+              </form>
+            ) : (
+              <Typography
+                variant="h4"
+                sx={{ fontWeight: 600, mb: 1 }}
+                onClick={handleEditTitle}
+              >
+                {projectData.name}
+              </Typography>
+            )}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Chip
                 label={getStatusName(projectData.status)}
@@ -240,7 +268,6 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
                 sx={{ fontWeight: 500 }}
               />
               <Typography variant="body2" color="text.secondary">
-                Last updated:{" "}
                 {new Date(projectData.updatedDate).toLocaleDateString("no-nb")}
               </Typography>
             </Box>
@@ -282,18 +309,18 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
                   Project Description
                 </Typography>
                 <Button
-                  startIcon={<KeyboardTab />}
+                  startIcon={<Edit />}
                   onClick={handleEditDescription}
                   sx={{ borderRadius: "1em", bgcolor: "#ebebeb" }}
                 >
-                  Change status
+                  Change description
                 </Button>
               </Stack>
               {isEditingDescription ? (
-                <form onSubmit={descriptionHandleSubmit(submitEditDescription)}>
+                <form onSubmit={updateProjectHandleSubmit(onSubmitProjectData)}>
                   <Controller
                     name="description"
-                    control={descriptionControl}
+                    control={updateProjectControl}
                     render={({ field }) => (
                       <TextField
                         {...field}
@@ -302,9 +329,21 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
                         rows={4}
                         defaultValue={projectData.description}
                         variant="filled"
+                        fullWidth
                       />
                     )}
                   />
+                  <Stack
+                    direction="row"
+                    justifyContent="end"
+                    mt="1em"
+                    gap="1em"
+                  >
+                    <Button onClick={() => setIsEditingDescription(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Save</Button>
+                  </Stack>
                 </form>
               ) : (
                 <Typography
@@ -644,18 +683,55 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
                   borderRadius: 2,
                 }}
               >
-                <AssignmentIcon
-                  sx={{ fontSize: 32, color: "info.main", mb: 1 }}
-                />
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color: "info.main" }}
-                >
-                  {projectData.resources?.length || 0}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Resources
-                </Typography>
+                {projectData.customer ? (
+                  <Stack direction="column" alignItems="center">
+                    <Business sx={{ fontSize: 32, color: "#222222", mb: 1 }} />
+                    <Typography
+                      variant="h4"
+                      sx={{ fontWeight: 700, color: "#222222" }}
+                    >
+                      {projectData.customer.name}
+                    </Typography>
+                    <Stack
+                      justifyContent="space-around"
+                      direction="row"
+                      width="100%"
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        {formatOrgNumber(
+                          projectData.customer.organizationNumber,
+                        )}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {projectData.customer.contactMail}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                ) : (
+                  <Stack direction="column" alignItems="center">
+                    <Business sx={{ fontSize: 32, color: "#222222", mb: 1 }} />
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: 700, color: "#222222" }}
+                    >
+                      Customer
+                    </Typography>
+                    <FormControl sx={{ width: "75%" }}>
+                      <InputLabel>Add customer</InputLabel>
+                      <Select
+                        id="demo-simple-select"
+                        label="Age"
+                        onChange={handleSetCustomer}
+                      >
+                        {customerData?.map((customer) => (
+                          <MenuItem value={customer.id}>
+                            {customer.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                )}
               </Paper>
             </Stack>
 

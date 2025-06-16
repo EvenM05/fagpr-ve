@@ -1,19 +1,24 @@
 import { StatusEnum } from "../enums/statusEnums";
+import { CustomerData } from "./CustomerInterface";
 import { ResourceData } from "./ResourceInterface";
 import { UserData } from "./UserInterfaces";
 
-export interface CreateProjectData {
+export interface CreateProjectModel {
   name: string;
   description: string;
   createdUserId: string;
 }
-export interface UpdateProjectStatus {
+
+export interface UpdateProjectModel {
+  name: string;
+  description: string;
   status: StatusEnum;
   updatedUserId: string;
 }
 
-export interface EditProjectDescriptionData {
-  description: string;
+export interface UpdateProjectCustomerModel {
+  customerId: string;
+  updatedUserId: string;
 }
 
 export interface PaginationBase<T> {
@@ -30,6 +35,7 @@ export interface ProjectData {
   updatedDate: Date;
   createdUser: UserData;
   updatedUser: UserData;
+  customer: CustomerData;
   resources: ResourceData[];
 }
 

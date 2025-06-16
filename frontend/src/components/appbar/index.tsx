@@ -22,7 +22,7 @@ import {
   removeFromStorage,
   retrieveFromStorage,
 } from "../../utilities/localStorage";
-import { getRoleName } from "../../utilities/enums/roleEnums";
+import { getRoleName, RoleEnum } from "../../utilities/enums/roleEnums";
 import { useState } from "react";
 import img from "../../assets/logo.png";
 
@@ -128,12 +128,17 @@ export const Appbar = () => {
             }}
           >
             <MenuList>
-              <MenuItem onClick={() => navigate("/admin/users")}>
-                User page
-              </MenuItem>
-              <MenuItem onClick={() => navigate("/admin/customer")}>
-                Customer page
-              </MenuItem>
+              {userData?.roleId === RoleEnum.Admin && (
+                <MenuItem onClick={() => navigate("/admin/users")}>
+                  User page
+                </MenuItem>
+              )}
+              {userData?.roleId === RoleEnum.Admin ||
+                (userData?.roleId === RoleEnum.ProjectManager && (
+                  <MenuItem onClick={() => navigate("/admin/customer")}>
+                    Customer page
+                  </MenuItem>
+                ))}
               <MenuItem>Settings</MenuItem>
               <Divider />
               <MenuItem onClick={handleLogOut}>Log out</MenuItem>

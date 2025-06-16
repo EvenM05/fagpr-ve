@@ -5,6 +5,7 @@ import {
 } from "../../utilities/Interfaces/LoginInterface";
 import { ApiClient } from "../backendApi/BackendApi";
 import {
+  GET_ALL_CUSTOMERS,
   GET_ALL_USERS,
   GET_CUSTOMER_PAGINATION,
   GET_PROJECT_BY_ID,
@@ -25,8 +26,9 @@ import { RoleEnum } from "../../utilities/enums/roleEnums";
 import { CreateCustomerData } from "../../utilities/Interfaces/CustomerInterface";
 import { CreateResourceData } from "../../utilities/Interfaces/ResourceInterface";
 import {
-  CreateProjectData,
-  UpdateProjectStatus,
+  CreateProjectModel,
+  UpdateProjectCustomerModel,
+  UpdateProjectModel,
 } from "../../utilities/Interfaces/ProjectInterface";
 
 /* login hooks */
@@ -93,14 +95,23 @@ export const useDeleteUser = (onSuccess: () => void) =>
 /* Project hooks */
 export const usePostProject = (onSuccess: () => void) =>
   useMutation({
-    mutationFn: (model: CreateProjectData) => ApiClient.postProject(model),
+    mutationFn: (model: CreateProjectModel) => ApiClient.postProject(model),
     onSuccess,
   });
 
-export const useChangeProjectStatus = (onSuccess: () => void) =>
+export const useUpdateProject = (onSuccess: () => void) =>
   useMutation({
-    mutationFn: (data: { projectId: string; model: UpdateProjectStatus }) =>
-      ApiClient.updateProjectStatus(data.projectId, data.model),
+    mutationFn: (data: { projectId: string; model: UpdateProjectModel }) =>
+      ApiClient.updateProject(data.projectId, data.model),
+    onSuccess,
+  });
+
+export const useChangeProjectCustomer = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (data: {
+      projectId: string;
+      model: UpdateProjectCustomerModel;
+    }) => ApiClient.updateProjectCustomer(data.projectId, data.model),
     onSuccess,
   });
 
@@ -163,6 +174,12 @@ export const useGetCustomerPagination = (
   useQuery({
     queryKey: [GET_CUSTOMER_PAGINATION, searchValue, page, pageSize],
     queryFn: () => ApiClient.getCustomerPagination(searchValue, page, pageSize),
+  });
+
+export const useGetAllCustomers = () =>
+  useQuery({
+    queryKey: [GET_ALL_CUSTOMERS],
+    queryFn: () => ApiClient.getAllCustomer(),
   });
 
 /* Resource hooks */

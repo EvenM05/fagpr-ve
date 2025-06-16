@@ -14,6 +14,16 @@ namespace Fagprove.Models.Dto
 
     }
 
+    public class UpdateProjectDto
+    {
+
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public StatusEnum Status { get; set; }
+        public Guid UpdatedUserId { get; set; }
+        
+    }
+
     public class ProjectPaginationDto
     {
         public Guid Id { get; set; }
@@ -30,12 +40,14 @@ namespace Fagprove.Models.Dto
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
 
+        public Customer Customer { get; set; }
+        
         public ICollection<Resources>? Resources { get; set; }
     }
 
-    public class StatusUpdateDto
+    public class AddCustomerDto
     {
-        public StatusEnum status { get; set; }
+        public Guid CustomerId { get; set; }
         public Guid UpdatedUserId { get; set; }
     }
 

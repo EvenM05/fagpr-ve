@@ -6,12 +6,13 @@ import {
 } from "../../utilities/Interfaces/CustomerInterface";
 import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
 import {
-  CreateProjectData,
+  CreateProjectModel,
   PaginationBase,
   ProjectData,
   ProjectMonthlyDataModel,
   ProjectStatusListData,
-  UpdateProjectStatus,
+  UpdateProjectCustomerModel,
+  UpdateProjectModel,
 } from "../../utilities/Interfaces/ProjectInterface";
 import { CreateResourceData } from "../../utilities/Interfaces/ResourceInterface";
 import {
@@ -147,7 +148,7 @@ export class ApiClient {
   }
 
   /* Project api */
-  static async postProject(model: CreateProjectData) {
+  static async postProject(model: CreateProjectModel) {
     try {
       const response = await http.post(
         ApiClient.baseUrl + "Project/CreateProject",
@@ -160,18 +161,31 @@ export class ApiClient {
     }
   }
 
-  static async updateProjectStatus(
+  static async updateProject(projectId: string, model: UpdateProjectModel) {
+    try {
+      const response = await http.put(
+        ApiClient.baseUrl + `Project/UpdateProject?id=${projectId}`,
+        model,
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error updating project data: ", error);
+    }
+  }
+
+  static async updateProjectCustomer(
     projectId: string,
-    model: UpdateProjectStatus,
+    model: UpdateProjectCustomerModel,
   ) {
     try {
       const response = await http.put(
-        ApiClient.baseUrl + `Project/UpdateProjectStatus?id=${projectId}`,
+        ApiClient.baseUrl + `Project/UpdateProjectCustomer?id=${projectId}`,
         model,
       );
       return response.data;
     } catch (error) {
-      console.error("Error updating project status: ", error);
+      console.error("Error updating project customer: ", error);
     }
   }
 
@@ -269,6 +283,19 @@ export class ApiClient {
       );
 
       const data: PaginationBase<CustomerData> = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting customer: ", error);
+    }
+  }
+
+  static async getAllCustomer() {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl + "Customer/GetAllCustomers",
+      );
+
+      const data: CustomerData[] = response.data;
       return data;
     } catch (error) {
       console.error("Error getting customer: ", error);
