@@ -1,30 +1,27 @@
-import { ArrowDropDownOutlined, MenuOutlined } from "@mui/icons-material";
+import { ArrowDropDownOutlined } from "@mui/icons-material";
 import {
-  AppBar,
   Avatar,
   Box,
   Button,
-  ButtonGroup,
+  CircularProgress,
   Divider,
-  IconButton,
   Menu,
   MenuItem,
   MenuList,
   Stack,
   Tab,
   Tabs,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useGetUserById } from "../../api/hooks";
 import {
   removeFromStorage,
   retrieveFromStorage,
 } from "../../utilities/localStorage";
-import { getRoleName, RoleEnum } from "../../utilities/enums/roleEnums";
+import { getRoleName } from "../../utilities/enums/roleEnums";
 import { useState } from "react";
 import img from "../../assets/logo.png";
+import useAuthService from "../../utilities/authService";
 
 function a11yProps(index: number) {
   return {
@@ -38,13 +35,13 @@ export const Appbar = () => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const token = retrieveFromStorage("token");
+  const navigate = useNavigate();
+  const { user, isAdmin, isPM } = useAuthService();
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const currentUserId = retrieveFromStorage("userId");
-  const navigate = useNavigate();
-
-  const { data: userData } = useGetUserById(currentUserId || "");
 
   const handleLogOut = () => {
     removeFromStorage("token");
@@ -55,6 +52,16 @@ export const Appbar = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     navigate(newValue);
   };
+
+  if (!token) {
+    navigate("/login");
+  }
+
+  if (!user) {
+    <Box>
+      <CircularProgress />
+    </Box>;
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -107,9 +114,9 @@ export const Appbar = () => {
             <Avatar />
             <Stack alignItems="flex-start">
               <Typography variant="caption">
-                {getRoleName(userData?.roleId || 0)}
+                {getRoleName(user?.roleId || 0)}
               </Typography>
-              <Typography>{userData?.name}</Typography>
+              <Typography>{user?.name}</Typography>
             </Stack>
           </Button>
 
@@ -128,17 +135,16 @@ export const Appbar = () => {
             }}
           >
             <MenuList>
-              {userData?.roleId === RoleEnum.Admin && (
+              {isAdmin() && (
                 <MenuItem onClick={() => navigate("/admin/users")}>
                   User page
                 </MenuItem>
               )}
-              {userData?.roleId === RoleEnum.Admin ||
-                (userData?.roleId === RoleEnum.ProjectManager && (
-                  <MenuItem onClick={() => navigate("/admin/customer")}>
-                    Customer page
-                  </MenuItem>
-                ))}
+              {(isAdmin() || isPM()) && (
+                <MenuItem onClick={() => navigate("/admin/customer")}>
+                  Customer page
+                </MenuItem>
+              )}
               <MenuItem>Settings</MenuItem>
               <Divider />
               <MenuItem onClick={handleLogOut}>Log out</MenuItem>

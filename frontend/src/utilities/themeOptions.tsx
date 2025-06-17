@@ -18,7 +18,7 @@ export const theme = createTheme({
           color: "black",
         },
         indicator: {
-          backgroundColor: "#3f3d56", // Adjust to match the underline color in image
+          backgroundColor: "#3f3d56",
         },
       },
     },
@@ -34,7 +34,6 @@ export const theme = createTheme({
           paddingBottom: "12px",
           paddingRight: "16px",
           paddingLeft: "16px",
-          // minHeight: "32px", // Reduce minimum height
           "&.Mui-selected": {
             color: "black",
           },

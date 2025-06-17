@@ -7,9 +7,10 @@ import "./App.css";
 import { Appbar } from "./components/appbar";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./utilities/themeOptions";
-import { AdminRoute, ProtectedRoute } from "./utilities/protectedRoute";
+import { ProtectedRoute } from "./utilities/protectedRoute";
 import { UserOverview } from "./pages/UserOverview";
 import CustomerOverview from "./pages/CustomerOverview";
+import { RoleEnum } from "./utilities/enums/roleEnums";
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -17,11 +18,7 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <ProtectedRoute>
-          <Appbar />
-        </ProtectedRoute>
-      ),
+      element: <Appbar />,
       children: [
         {
           path: "dashboard",
@@ -34,17 +31,17 @@ export default function App() {
         {
           path: "admin/users",
           element: (
-            <AdminRoute>
+            <ProtectedRoute roles={[RoleEnum.Admin]}>
               <UserOverview />
-            </AdminRoute>
+            </ProtectedRoute>
           ),
         },
         {
           path: "admin/customer",
           element: (
-            <AdminRoute>
+            <ProtectedRoute roles={[RoleEnum.Admin, RoleEnum.ProjectManager]}>
               <CustomerOverview />
-            </AdminRoute>
+            </ProtectedRoute>
           ),
         },
       ],

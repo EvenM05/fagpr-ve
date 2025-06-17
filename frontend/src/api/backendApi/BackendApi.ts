@@ -1,10 +1,14 @@
+import { AxiosResponse } from "axios";
 import { RoleEnum } from "../../utilities/enums/roleEnums";
 import { StatusEnum } from "../../utilities/enums/statusEnums";
 import {
   CreateCustomerData,
   CustomerData,
 } from "../../utilities/Interfaces/CustomerInterface";
-import { LoginModel } from "../../utilities/Interfaces/LoginInterface";
+import {
+  LoginModel,
+  LoginResponseModel,
+} from "../../utilities/Interfaces/LoginInterface";
 import {
   CreateProjectModel,
   PaginationBase,
@@ -34,13 +38,27 @@ export class ApiClient {
         model,
       );
 
-      return response.data;
+      const loginResponse: AxiosResponse<LoginResponseModel> = response;
+      return loginResponse;
     } catch (error) {
       console.error("Error logging in: ", error);
     }
   }
 
   /* User api */
+  static async getAuthenticatedUser() {
+    try {
+      const response = await http.get(
+        ApiClient.baseUrl + "User/GetAuthenticatedUser",
+      );
+
+      const data: UserData = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error getting authenticatedUser: ", error);
+    }
+  }
+
   static async postUser(model: CreateUserData) {
     try {
       const response = await http.post(
@@ -82,7 +100,7 @@ export class ApiClient {
 
       console.log("roleId", roleId);
 
-      if (roleId) {
+      if (roleId !== undefined) {
         params.append("roleFilter", roleId.toString());
       }
 

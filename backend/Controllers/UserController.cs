@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Fagprove.Utils.Enums;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 
 namespace Fagprove.Controllers
 {
@@ -84,6 +85,44 @@ namespace Fagprove.Controllers
             }
             return BadRequest(updateModel);
         }
+
+            [HttpGet("GetAuthenticatedUser")]
+            public async Task<IActionResult> GetAuthenticatedUser()
+            {
+                var userIdClaim = HttpContext.User.Claims
+                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("User ID claim not found.");
+                }
+
+                Console.WriteLine(userIdClaim.Value);
+
+                if (!Guid.TryParse(userIdClaim.Value, out var userId))
+                {
+                    return BadRequest("Invalid user ID format in token.");
+                }
+
+                var user = await _appDbContext.User
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var result = new
+                {
+                    user.Id,
+                    user.Email,
+                    user.Name,
+                    user.RoleId
+                };
+
+                return Ok(result);
+            }
+
 
         [HttpGet("GetUserPagination")]
         public async Task<IActionResult> GetUserPagination([FromQuery] string searchValue = "", int page = 1, int pageSize = 10, RoleEnum? roleFilter = null)

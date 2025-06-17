@@ -67,6 +67,7 @@ import {
   UpdateProjectCustomerModel,
   UpdateProjectModel,
 } from "../../utilities/Interfaces/ProjectInterface";
+import useAuthService from "../../utilities/authService";
 
 interface ProjectViewDialogProps {
   projectId: string;
@@ -75,7 +76,7 @@ interface ProjectViewDialogProps {
 
 export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
   const { projectId, handleClose } = props;
-  const userId = retrieveFromStorage("userId");
+  const { user } = useAuthService();
 
   const [isCreatingResource, setIsCreatingResource] = useState<boolean>(false);
   const [isEditingDescription, setIsEditingDescription] =
@@ -124,7 +125,7 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
       name: projectData?.name,
       description: projectData?.description,
       status: projectData?.status,
-      updatedUserId: userId || "",
+      updatedUserId: user?.id,
     },
   });
 
@@ -134,15 +135,14 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
   };
 
   const onSubmitProjectData = async (data: UpdateProjectModel) => {
-    const userId = retrieveFromStorage("userId");
-    if (projectData && userId) {
+    if (projectData && user) {
       updateProject({
         projectId: projectData.id,
         model: {
           name: data.name,
           description: data.description,
           status: data.status,
-          updatedUserId: userId,
+          updatedUserId: user.id,
         },
       });
       setIsEditTitle(false);
@@ -151,12 +151,12 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
   };
 
   const handleChangeStatus = () => {
-    if (projectData) {
+    if (projectData && user) {
       onSubmitProjectData({
         name: projectData.name,
         description: projectData.description,
         status: projectData.status + 1,
-        updatedUserId: userId || "",
+        updatedUserId: user.id,
       });
     }
   };
@@ -165,7 +165,7 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
     const value = e.target.value;
     const model: UpdateProjectCustomerModel = {
       customerId: value,
-      updatedUserId: userId || "",
+      updatedUserId: user?.id || "",
     };
     addCustomer({ projectId, model });
   };
@@ -207,10 +207,10 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
 
   const formatOrgNumber = (raw: string | number): string =>
     raw
-      .toString() // make sure it’s a string
-      .replace(/\D/g, "") // strip anything that isn’t a digit
-      .padStart(9, "0") // always show 9 digits
-      .replace(/(\d{3})(?=\d)/g, "$1 "); // 000 000 000
+      .toString()
+      .replace(/\D/g, "")
+      .padStart(9, "0")
+      .replace(/(\d{3})(?=\d)/g, "$1 ");
 
   if (!projectData) {
     return (

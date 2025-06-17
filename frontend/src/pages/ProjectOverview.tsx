@@ -21,9 +21,10 @@ import {
   Tooltip,
   LinearProgress,
   Stack,
+  Pagination,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
-  Add as AddIcon,
   AccessTime as TimeIcon,
   AttachMoney as MoneyIcon,
   FilterList as FilterIcon,
@@ -32,7 +33,6 @@ import {
   Add,
   Business,
 } from "@mui/icons-material";
-import { useForm } from "react-hook-form";
 import {
   useGetProjectPagination,
   useGetProjectStatusList,
@@ -43,7 +43,6 @@ import {
   getStatusName,
   StatusEnum,
 } from "../utilities/enums/statusEnums";
-import { ProjectData } from "../utilities/Interfaces/ProjectInterface";
 import { ResourceData } from "../utilities/Interfaces/ResourceInterface";
 import useDebounce from "../utilities/useDebounce";
 import { ProjectViewDialog } from "../components/projectViewDialog";
@@ -52,15 +51,7 @@ import {
   GET_PROJECT_STATUS_LIST,
 } from "../api/constants";
 import { useQueryClient } from "@tanstack/react-query";
-import { retrieveFromStorage } from "../utilities/localStorage";
-
-interface ProjectFormData {
-  name: string;
-  description: string;
-  status: StatusEnum;
-  createdUserId: string;
-  updatedUserId: string;
-}
+import useAuthService from "../utilities/authService";
 
 const ProjectOverview: React.FC = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
@@ -77,6 +68,7 @@ const ProjectOverview: React.FC = () => {
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearch = useDebounce(searchValue, 500);
   const queryClient = useQueryClient();
+  const { user, isAdmin, isPM } = useAuthService();
 
   const onSuccess = () => {
     queryClient.invalidateQueries({
@@ -90,57 +82,40 @@ const ProjectOverview: React.FC = () => {
   const { mutateAsync: createProject } = usePostProject(onSuccess);
 
   const { data: projectStatusData } = useGetProjectStatusList();
-  const { data: projectData, isLoading: projectLoading } =
-    useGetProjectPagination(
-      debouncedSearch,
-      page,
-      rowsPerPage,
-      sortOrder,
-      statusFilter,
-    );
-
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ProjectFormData>({
-    defaultValues: {
-      name: "",
-      description: "",
-      status: StatusEnum.ToDo,
-      createdUserId: "",
-      updatedUserId: "",
-    },
-  });
+  const { data: projectData } = useGetProjectPagination(
+    debouncedSearch,
+    page,
+    rowsPerPage,
+    sortOrder,
+    statusFilter,
+  );
 
   const handleCreateProject = () => {
-    const userId = retrieveFromStorage("userId");
-    if (userId) {
+    if (user) {
       createProject({
         name: "New project",
         description: "",
-        createdUserId: userId,
+        createdUserId: user.id,
       });
     }
   };
 
-  const handleOpenDialog = (project?: ProjectData) => {
-    if (project) {
-      setSelectedProjectId(project.id);
-      reset({
-        name: project.name,
-        description: project.description,
-        status: project.status,
-        createdUserId: project.createdUser.id,
-        updatedUserId: project.updatedUser.id,
-      });
-    } else {
-      setSelectedProjectId("");
-      reset();
-    }
-    setDialogOpen(true);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
   };
+
+  const handleRowsPerPageChange = (event: SelectChangeEvent) => {
+    const value = parseInt(event.target.value, 10);
+    setRowsPerPage(value);
+    setPage(1);
+  };
+
+  const totalPages = projectData
+    ? Math.ceil(projectData.totalItems / rowsPerPage)
+    : 0;
 
   const calculateTotalCost = (resources: ResourceData[]): number => {
     return resources.reduce((total, resource) => total + resource.totalCost, 0);
@@ -170,7 +145,7 @@ const ProjectOverview: React.FC = () => {
       sx={{
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         paddingTop: "4em",
-        height: "95vh",
+        minHeight: "95vh",
       }}
     >
       <Container maxWidth="xl" sx={{ pt: 4, pb: 6 }}>
@@ -218,9 +193,11 @@ const ProjectOverview: React.FC = () => {
                 </IconButton>
               </Tooltip>
 
-              <Button startIcon={<Add />} onClick={handleCreateProject}>
-                <Typography>Create project</Typography>
-              </Button>
+              {(isAdmin() || isPM()) && (
+                <Button startIcon={<Add />} onClick={handleCreateProject}>
+                  <Typography>Create project</Typography>
+                </Button>
+              )}
             </Box>
           </Box>
 
@@ -383,7 +360,7 @@ const ProjectOverview: React.FC = () => {
         )}
 
         <Grid container spacing={3}>
-          {projectData ? (
+          {projectData && projectData.items.length > 0 ? (
             projectData.items.map((project) => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={project.id}>
                 <Card
@@ -409,7 +386,8 @@ const ProjectOverview: React.FC = () => {
                     sx={{ flexGrow: 1, p: 3 }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleOpenDialog(project);
+                      setSelectedProjectId(project.id);
+                      setDialogOpen(true);
                     }}
                   >
                     <Box sx={{ mb: 2 }}>
@@ -570,7 +548,7 @@ const ProjectOverview: React.FC = () => {
               </Grid>
             ))
           ) : (
-            <Box sx={{ textAlign: "center", mt: 6, py: 6 }}>
+            <Box sx={{ textAlign: "center", mt: 6, py: 6, width: "100%" }}>
               <TrendingUpIcon sx={{ fontSize: 64, color: "grey.400", mb: 2 }} />
               <Typography
                 variant="h5"
@@ -584,17 +562,79 @@ const ProjectOverview: React.FC = () => {
                   ? "Try adjusting your filters to see more projects."
                   : "Get started by creating your first project."}
               </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => handleOpenDialog()}
-                sx={{ mt: 1 }}
-              >
-                Create Project
-              </Button>
             </Box>
           )}
         </Grid>
+
+        {projectData && projectData.items.length > 0 && (
+          <Paper
+            sx={{
+              mt: 4,
+              p: 2,
+              bgcolor: "rgba(255, 255, 255, 0.9)",
+              backdropFilter: "blur(10px)",
+              borderRadius: 2,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Items per page:
+                </Typography>
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={rowsPerPage.toString()}
+                    onChange={handleRowsPerPageChange}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    <MenuItem value={"6"}>6</MenuItem>
+                    <MenuItem value={"12"}>12</MenuItem>
+                    <MenuItem value={"24"}>24</MenuItem>
+                    <MenuItem value={"48"}>48</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Typography variant="body2" color="text.secondary">
+                Showing {(page - 1) * rowsPerPage + 1}-
+                {Math.min(page * rowsPerPage, projectData.totalItems)} of{" "}
+                {projectData.totalItems} projects
+              </Typography>
+
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    borderRadius: 2,
+                    fontWeight: 500,
+                  },
+                  "& .Mui-selected": {
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": {
+                      bgcolor: "primary.dark",
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Paper>
+        )}
       </Container>
 
       <Dialog

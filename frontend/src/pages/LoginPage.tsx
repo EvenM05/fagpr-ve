@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -10,27 +10,16 @@ import {
   Container,
   InputAdornment,
   IconButton,
-  Divider,
-  Link,
   Fade,
-  Alert,
   Stack,
 } from "@mui/material";
-import {
-  Visibility,
-  VisibilityOff,
-  Email,
-  Lock,
-  Google as GoogleIcon,
-  GitHub as GitHubIcon,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../api/hooks";
 import { LoginModel } from "../utilities/Interfaces/LoginInterface";
 import { saveToStorage } from "../utilities/localStorage";
 
-// Create a modern theme
 const theme = createTheme({
   palette: {
     primary: {
@@ -56,17 +45,13 @@ const theme = createTheme({
   },
 });
 
-interface FormData {
-  email: string;
-  password: string;
-}
-
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginErrors, setLoginErrors] = useState(false);
   const navigate = useNavigate();
 
-  const { mutateAsync: userLogin } = useLogin(() => navigate("/dashboard"));
+  const { mutateAsync: userLogin } = useLogin();
 
   const {
     control,
@@ -77,16 +62,22 @@ export default function LoginPage() {
       email: "",
       password: "",
     },
-    mode: "onChange", // Validate on change for better UX
+    mode: "onChange",
   });
 
   const onSubmit = async (data: LoginModel) => {
     setIsLoading(true);
     const loginResponse = await userLogin(data);
 
-    if (loginResponse) {
-      saveToStorage("token", loginResponse.token);
-      saveToStorage("userId", loginResponse.userId);
+    console.log("login response: ", loginResponse);
+
+    if (loginResponse?.status === 200) {
+      saveToStorage("token", loginResponse.data.token);
+      saveToStorage("userId", loginResponse.data.userId);
+      navigate("/Dashboard");
+    } else if (loginResponse?.status === 401) {
+      setLoginErrors(true);
+      console.error("Unautherized");
     } else {
       console.error("Error occured while logging in");
     }

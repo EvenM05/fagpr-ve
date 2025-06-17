@@ -45,12 +45,11 @@ namespace Fagprove.Controllers
                 return Unauthorized(new {Error = "Unauthorized"});
             }
 
-            var token = JwtTokenManager.GenerateJwtToken(model.Email);
+            var token = JwtTokenManager.GenerateJwtToken(user.Id);
 
             var returnData = new
             {
                 token = token,
-                userId = user.Id
             };
 
             return Ok(returnData);

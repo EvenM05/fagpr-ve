@@ -15,23 +15,12 @@ import {
   Box,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { getRoleName } from "../../utilities/enums/roleEnums";
+import { getRoleName, RoleEnum } from "../../utilities/enums/roleEnums";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
-import { UserData } from "../../utilities/Interfaces/UserInterfaces";
-
-// Enums and interfaces
-export enum RoleEnum {
-  User,
-  ProjectManager,
-  Admin,
-}
-
-export interface CreateUserData {
-  name: string;
-  email: string;
-  password: string;
-  roleId: RoleEnum;
-}
+import {
+  CreateUserData,
+  UserData,
+} from "../../utilities/Interfaces/UserInterfaces";
 
 interface CreateUserDialogProps {
   handleClose: () => void;

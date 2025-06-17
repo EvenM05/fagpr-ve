@@ -9,12 +9,12 @@ namespace Fagprove.Utils
     {
         public const string SecretKey = "*Ri7YTb1N@tEX$Yf&pNP&x5JRo9#c4dK#IH5jJsI";
 
-        public static string GenerateJwtToken(string username)
+        public static string GenerateJwtToken(Guid userId)
         {
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

@@ -181,6 +181,10 @@ export default function CustomerOverview() {
     setPage(1);
   };
 
+  const totalPages = customerData
+    ? Math.ceil(customerData.totalItems / pageSize)
+    : 0;
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) || "Please enter a valid email address";
@@ -469,7 +473,7 @@ export default function CustomerOverview() {
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
               <Pagination
-                // count={customerData.totalPages}
+                count={totalPages}
                 page={page}
                 onChange={handlePageChange}
                 color="primary"

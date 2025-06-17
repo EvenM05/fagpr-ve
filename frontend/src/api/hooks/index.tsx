@@ -30,13 +30,15 @@ import {
   UpdateProjectCustomerModel,
   UpdateProjectModel,
 } from "../../utilities/Interfaces/ProjectInterface";
+import { AxiosResponse } from "axios";
 
 /* login hooks */
-export const useLogin = (onSuccess: () => void) =>
+export const useLogin = () =>
   useMutation({
-    mutationFn: (model: LoginModel): Promise<LoginResponseModel> =>
+    mutationFn: (
+      model: LoginModel,
+    ): Promise<AxiosResponse<LoginResponseModel, undefined> | undefined> =>
       ApiClient.login(model),
-    onSuccess,
   });
 
 /* User hooks */
