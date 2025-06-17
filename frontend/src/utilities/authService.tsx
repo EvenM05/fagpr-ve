@@ -2,22 +2,26 @@ import { useState, useEffect } from "react";
 import { RoleEnum } from "./enums/roleEnums";
 import { UserData } from "./Interfaces/UserInterfaces";
 import { ApiClient } from "../api/backendApi/BackendApi";
+import { useNavigate } from "react-router-dom";
 
 const useAuthService = () => {
   const [user, setUser] = useState<UserData>();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchUser = async () => {
-    const user = await ApiClient.getAuthenticatedUser();
-    setUser(user);
+    const response = await ApiClient.getAuthenticatedUser();
+    console.log("response status: ", response?.status);
+    if (response?.status === 401 || !response) {
+      navigate("/login");
+    }
+    setUser(response?.data);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchUser();
   }, []);
-
-  console.log("user role", user?.roleId);
 
   const isAdmin = () => {
     if (user && user.roleId === RoleEnum.Admin) return true;

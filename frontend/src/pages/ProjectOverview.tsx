@@ -162,20 +162,11 @@ const ProjectOverview: React.FC = () => {
               <Typography
                 variant="h3"
                 component="h1"
-                sx={{
-                  fontWeight: 700,
-                  color: "grey.900",
-                  mb: 1,
-                  background:
-                    "linear-gradient(135deg,rgb(255, 255, 255),rgb(110, 110, 110))",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
+                sx={{ fontWeight: 700, color: "#ebebeb" }}
               >
                 Project Overview
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.8)" }}>
                 Manage and track your projects efficiently
               </Typography>
             </Box>

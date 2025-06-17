@@ -33,6 +33,7 @@ import {
   VisibilityOff,
   Lock,
   Visibility,
+  Add,
 } from "@mui/icons-material";
 import {
   useDeleteUser,
@@ -283,6 +284,15 @@ export const UserOverview = () => {
                   <MenuItem value={RoleEnum.Admin}>Administrators</MenuItem>
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <Button
+                onClick={handleAddUser}
+                sx={{ p: "1em" }}
+                startIcon={<Add />}
+              >
+                Create user
+              </Button>
             </Grid>
           </Grid>
         </Box>

@@ -26,6 +26,7 @@ import {
   UserRoleData,
 } from "../../utilities/Interfaces/UserInterfaces";
 import http from "../http";
+import { useNavigate } from "react-router-dom";
 
 export class ApiClient {
   static baseUrl = "http://localhost:5219/api/";
@@ -52,7 +53,8 @@ export class ApiClient {
         ApiClient.baseUrl + "User/GetAuthenticatedUser",
       );
 
-      const data: UserData = response.data;
+      const data: AxiosResponse<UserData> = response;
+
       return data;
     } catch (error) {
       console.error("Error getting authenticatedUser: ", error);
@@ -97,8 +99,6 @@ export class ApiClient {
         page: page.toString(),
         pageSize: pageSize.toString(),
       });
-
-      console.log("roleId", roleId);
 
       if (roleId !== undefined) {
         params.append("roleFilter", roleId.toString());

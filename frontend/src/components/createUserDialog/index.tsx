@@ -46,6 +46,7 @@ export const CreateUserDialog = (props: CreateUserDialogProps) => {
 
   const handleFormSubmit = async (data: CreateUserData) => {
     createUser(data);
+    handleClose();
   };
 
   const handleDialogClose = () => {

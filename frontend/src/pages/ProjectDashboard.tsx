@@ -24,6 +24,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Container,
 } from "@mui/material";
 import { PieChart, LineChart, BarChart, SparkLineChart } from "@mui/x-charts";
 import { StatusEnum } from "../utilities/enums/statusEnums";
@@ -191,433 +192,436 @@ export default function ProjectDashboard() {
         minHeight: "95vh",
       }}
     >
-      <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 4 }}
-        >
-          <Box>
-            <Typography
-              variant="h3"
-              sx={{ fontWeight: 700, color: "white", mb: 1 }}
-            >
-              Project Dashboard
-            </Typography>
-            <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.8)" }}>
-              Monitor your projects and track progress
-            </Typography>
-          </Box>
-        </Stack>
+      <Container maxWidth="xl" sx={{ pt: 4, pb: 6 }}>
+        <Box sx={{ mb: 2 }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ mb: 4 }}
+          >
+            <Box>
+              <Typography
+                variant="h3"
+                component="h1"
+                sx={{ fontWeight: 700, color: "#ebebeb" }}
+              >
+                Project Dashboard
+              </Typography>
+              <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.8)" }}>
+                Monitor your projects and track progress
+              </Typography>
+            </Box>
+          </Stack>
 
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "10em",
-              }}
-            >
-              <CardContent>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Box>
-                    <Typography color="textSecondary" variant="subtitle2">
-                      Total Projects
-                    </Typography>
-                    <Typography
-                      variant="h4"
-                      sx={{ fontWeight: 700, color: "#1976d2" }}
-                    >
-                      {metrics.totalProjects}
-                    </Typography>
-                  </Box>
-                  <Avatar sx={{ bgcolor: "#e3f2fd", color: "#1976d2" }}>
-                    <Assignment />
-                  </Avatar>
-                </Stack>
-                <SparkLineChart
-                  data={projectProgressData}
-                  height={60}
-                  color="#1976d2"
-                  margin={{ top: 10, bottom: 10, left: 0, right: 0 }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "10em",
-              }}
-            >
-              <CardContent>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Box>
-                    <Typography color="textSecondary" variant="subtitle2">
-                      Active Projects
-                    </Typography>
-                    <Typography
-                      variant="h4"
-                      sx={{ fontWeight: 700, color: "#2e7d32" }}
-                    >
-                      {metrics.activeProjects}
-                    </Typography>
-                  </Box>
-                  <Avatar sx={{ bgcolor: "#e8f5e9", color: "#2e7d32" }}>
-                    <TrendingUp />
-                  </Avatar>
-                </Stack>
-                <LinearProgress
-                  variant="determinate"
-                  value={
-                    (100 * projectStatusList.startedProjects) /
-                    projectData.totalItems
-                  }
-                  sx={{ mt: 2, height: 8, borderRadius: 4 }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "10em",
-              }}
-            >
-              <CardContent>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Stack direction="column" alignItems="start">
-                    <Typography color="textSecondary" variant="subtitle2">
-                      Total Budget
-                    </Typography>
-                    <Typography
-                      variant="h4"
-                      sx={{ fontWeight: 700, color: "#ed6c02" }}
-                    >
-                      {metrics.totalBudget.toFixed(0)} kr
-                    </Typography>
-                  </Stack>
-                  <Avatar sx={{ bgcolor: "#fff3e0", color: "#ed6c02" }}>
-                    <AttachMoney />
-                  </Avatar>
-                </Stack>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  sx={{ mt: 1 }}
-                ></Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "10em",
-              }}
-            >
-              <CardContent>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Box>
-                    <Typography color="textSecondary" variant="subtitle2">
-                      Completion Rate
-                    </Typography>
-                    <Typography
-                      variant="h4"
-                      sx={{ fontWeight: 700, color: "#9c27b0" }}
-                    >
-                      {metrics.completionRate.toFixed(0)}%
-                    </Typography>
-                  </Box>
-                  <Avatar sx={{ bgcolor: "#f3e5f5", color: "#9c27b0" }}>
-                    <Schedule />
-                  </Avatar>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "350px",
-              }}
-            >
-              <CardContent sx={{ height: "100%" }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Monthly Project Trends
-                </Typography>
-                <LineChart
-                  height={270}
-                  xAxis={[
-                    {
-                      scaleType: "point",
-                      data: monthlyData.map((d) => d.month),
-                    },
-                  ]}
-                  series={[
-                    {
-                      data: monthlyData.map((d) => d.projectCount),
-                      label: "Projects",
-                      color: "#1976d2",
-                    },
-                  ]}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "350px",
-              }}
-            >
-              <CardContent sx={{ height: "100%" }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Project Status Distribution
-                </Typography>
-                <PieChart
-                  series={[
-                    {
-                      data: statusPieData,
-                      highlightScope: { fade: "global", highlight: "item" },
-                      faded: {
-                        innerRadius: 30,
-                        additionalRadius: -30,
-                        color: "gray",
-                      },
-                    },
-                  ]}
-                  height={270}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "29em",
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Resource Cost Distribution
-                </Typography>
-                <BarChart
-                  height={300}
-                  xAxis={[
-                    {
-                      scaleType: "band",
-                      data: resourceBarData.map((item) => item.type),
-                    },
-                  ]}
-                  series={[
-                    {
-                      data: resourceBarData.map((item) => item.cost),
-                      label: "Cost (kr)",
-                      color: "#2e7d32",
-                    },
-                  ]}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card
-              sx={{
-                background: "rgba(255,255,255,0.95)",
-                backdropFilter: "blur(10px)",
-                height: "29em",
-              }}
-            >
-              <CardContent>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ mb: 2 }}
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Recent Projects
-                  </Typography>
-                  <IconButton
-                    size="small"
-                    onClick={(e) => setAnchorEl(e.currentTarget)}
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "10em",
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
                   >
-                    <MoreVert />
-                  </IconButton>
-                </Stack>
-
-                <Stack spacing={2}>
-                  {recentProjects.slice(-3).map((project) => (
-                    <Paper
-                      key={project.id}
-                      sx={{
-                        p: 2,
-                        border: "1px solid #e0e0e0",
-                        "&:hover": { boxShadow: 2 },
-                      }}
-                    >
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
+                    <Box>
+                      <Typography color="textSecondary" variant="subtitle2">
+                        Total Projects
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, color: "#1976d2" }}
                       >
-                        <Box sx={{ flex: 1 }}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{ fontWeight: 600 }}
-                          >
-                            {project.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            sx={{ mb: 1 }}
-                          >
-                            {project.description}
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-around"
-                            spacing={1}
-                          >
+                        {metrics.totalProjects}
+                      </Typography>
+                    </Box>
+                    <Avatar sx={{ bgcolor: "#e3f2fd", color: "#1976d2" }}>
+                      <Assignment />
+                    </Avatar>
+                  </Stack>
+                  <SparkLineChart
+                    data={projectProgressData}
+                    height={60}
+                    color="#1976d2"
+                    margin={{ top: 10, bottom: 10, left: 0, right: 0 }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "10em",
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Box>
+                      <Typography color="textSecondary" variant="subtitle2">
+                        Active Projects
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, color: "#2e7d32" }}
+                      >
+                        {metrics.activeProjects}
+                      </Typography>
+                    </Box>
+                    <Avatar sx={{ bgcolor: "#e8f5e9", color: "#2e7d32" }}>
+                      <TrendingUp />
+                    </Avatar>
+                  </Stack>
+                  <LinearProgress
+                    variant="determinate"
+                    value={
+                      (100 * projectStatusList.startedProjects) /
+                      projectData.totalItems
+                    }
+                    sx={{ mt: 2, height: 8, borderRadius: 4 }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "10em",
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Stack direction="column" alignItems="start">
+                      <Typography color="textSecondary" variant="subtitle2">
+                        Total Budget
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, color: "#ed6c02" }}
+                      >
+                        {metrics.totalBudget.toFixed(0)} kr
+                      </Typography>
+                    </Stack>
+                    <Avatar sx={{ bgcolor: "#fff3e0", color: "#ed6c02" }}>
+                      <AttachMoney />
+                    </Avatar>
+                  </Stack>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                  ></Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "10em",
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Box>
+                      <Typography color="textSecondary" variant="subtitle2">
+                        Completion Rate
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, color: "#9c27b0" }}
+                      >
+                        {metrics.completionRate.toFixed(0)}%
+                      </Typography>
+                    </Box>
+                    <Avatar sx={{ bgcolor: "#f3e5f5", color: "#9c27b0" }}>
+                      <Schedule />
+                    </Avatar>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid size={{ xs: 12, md: 8 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "350px",
+                }}
+              >
+                <CardContent sx={{ height: "100%" }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    Monthly Project Trends
+                  </Typography>
+                  <LineChart
+                    height={270}
+                    xAxis={[
+                      {
+                        scaleType: "point",
+                        data: monthlyData.map((d) => d.month),
+                      },
+                    ]}
+                    series={[
+                      {
+                        data: monthlyData.map((d) => d.projectCount),
+                        label: "Projects",
+                        color: "#1976d2",
+                      },
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "350px",
+                }}
+              >
+                <CardContent sx={{ height: "100%" }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    Project Status Distribution
+                  </Typography>
+                  <PieChart
+                    series={[
+                      {
+                        data: statusPieData,
+                        highlightScope: { fade: "global", highlight: "item" },
+                        faded: {
+                          innerRadius: 30,
+                          additionalRadius: -30,
+                          color: "gray",
+                        },
+                      },
+                    ]}
+                    height={270}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "29em",
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                    Resource Cost Distribution
+                  </Typography>
+                  <BarChart
+                    height={300}
+                    xAxis={[
+                      {
+                        scaleType: "band",
+                        data: resourceBarData.map((item) => item.type),
+                      },
+                    ]}
+                    series={[
+                      {
+                        data: resourceBarData.map((item) => item.cost),
+                        label: "Cost (kr)",
+                        color: "#2e7d32",
+                      },
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(10px)",
+                  height: "29em",
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ mb: 2 }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Recent Projects
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={(e) => setAnchorEl(e.currentTarget)}
+                    >
+                      <MoreVert />
+                    </IconButton>
+                  </Stack>
+
+                  <Stack spacing={2}>
+                    {recentProjects.slice(-3).map((project) => (
+                      <Paper
+                        key={project.id}
+                        sx={{
+                          p: 2,
+                          border: "1px solid #e0e0e0",
+                          "&:hover": { boxShadow: 2 },
+                        }}
+                      >
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Box sx={{ flex: 1 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: 600 }}
+                            >
+                              {project.name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              sx={{ mb: 1 }}
+                            >
+                              {project.description}
+                            </Typography>
                             <Stack
                               direction="row"
-                              alignItems="center"
-                              justifyContent="space-between"
+                              justifyContent="space-around"
                               spacing={1}
                             >
-                              <Chip
-                                label={statusColors[project.status].label}
-                                size="small"
-                                sx={{
-                                  bgcolor: statusColors[project.status].bg,
-                                  color: statusColors[project.status].color,
-                                  fontWeight: 600,
-                                }}
-                              />
-                              <Tooltip title={project.updatedUser.name}>
-                                <Avatar
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                justifyContent="space-between"
+                                spacing={1}
+                              >
+                                <Chip
+                                  label={statusColors[project.status].label}
+                                  size="small"
                                   sx={{
-                                    width: 24,
-                                    height: 24,
-                                    fontSize: "0.75rem",
+                                    bgcolor: statusColors[project.status].bg,
+                                    color: statusColors[project.status].color,
+                                    fontWeight: 600,
                                   }}
+                                />
+                                <Tooltip title={project.updatedUser.name}>
+                                  <Avatar
+                                    sx={{
+                                      width: 24,
+                                      height: 24,
+                                      fontSize: "0.75rem",
+                                    }}
+                                  >
+                                    {project.updatedUser.name
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("")}
+                                  </Avatar>
+                                </Tooltip>
+                              </Stack>
+
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  mb: 2,
+                                }}
+                              >
+                                <Box
+                                  sx={{ display: "flex", alignItems: "center" }}
                                 >
-                                  {project.updatedUser.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </Avatar>
-                              </Tooltip>
+                                  <AccessTime
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                  />
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {calculateTotalHours(project.resources)}h
+                                  </Typography>
+                                </Box>
+                                <Box
+                                  sx={{ display: "flex", alignItems: "center" }}
+                                >
+                                  <AttachMoney
+                                    fontSize="small"
+                                    sx={{ mr: 1, color: "text.secondary" }}
+                                  />
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {calculateTotalCost(
+                                      project.resources,
+                                    ).toLocaleString()}
+                                    kr
+                                  </Typography>
+                                </Box>
+                              </Box>
                             </Stack>
+                          </Box>
+                        </Stack>
+                      </Paper>
+                    ))}
+                  </Stack>
 
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                mb: 2,
-                              }}
-                            >
-                              <Box
-                                sx={{ display: "flex", alignItems: "center" }}
-                              >
-                                <AccessTime
-                                  fontSize="small"
-                                  sx={{ mr: 1, color: "text.secondary" }}
-                                />
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {calculateTotalHours(project.resources)}h
-                                </Typography>
-                              </Box>
-                              <Box
-                                sx={{ display: "flex", alignItems: "center" }}
-                              >
-                                <AttachMoney
-                                  fontSize="small"
-                                  sx={{ mr: 1, color: "text.secondary" }}
-                                />
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {calculateTotalCost(
-                                    project.resources,
-                                  ).toLocaleString()}
-                                  kr
-                                </Typography>
-                              </Box>
-                            </Box>
-                          </Stack>
-                        </Box>
-                      </Stack>
-                    </Paper>
-                  ))}
-                </Stack>
-
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={() => setAnchorEl(null)}
-                >
-                  <MenuItem onClick={() => setAnchorEl(null)}>
-                    View All Projects
-                  </MenuItem>
-                  <MenuItem onClick={() => setAnchorEl(null)}>
-                    Export Data
-                  </MenuItem>
-                  <MenuItem onClick={() => setAnchorEl(null)}>
-                    Settings
-                  </MenuItem>
-                </Menu>
-              </CardContent>
-            </Card>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={() => setAnchorEl(null)}
+                  >
+                    <MenuItem onClick={() => setAnchorEl(null)}>
+                      View All Projects
+                    </MenuItem>
+                    <MenuItem onClick={() => setAnchorEl(null)}>
+                      Export Data
+                    </MenuItem>
+                    <MenuItem onClick={() => setAnchorEl(null)}>
+                      Settings
+                    </MenuItem>
+                  </Menu>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </Container>
     </Box>
   );
 }

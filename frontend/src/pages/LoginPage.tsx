@@ -69,8 +69,6 @@ export default function LoginPage() {
     setIsLoading(true);
     const loginResponse = await userLogin(data);
 
-    console.log("login response: ", loginResponse);
-
     if (loginResponse?.status === 200) {
       saveToStorage("token", loginResponse.data.token);
       saveToStorage("userId", loginResponse.data.userId);

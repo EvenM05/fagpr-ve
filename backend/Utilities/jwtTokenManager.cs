@@ -23,7 +23,7 @@ namespace Fagprove.Utils
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddYears(30),
+                expires: DateTime.UtcNow.AddHours(3),
                 signingCredentials: creds
             );
             

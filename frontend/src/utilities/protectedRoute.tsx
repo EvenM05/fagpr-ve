@@ -31,7 +31,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (!loading) {
     if (!isAuthenticated()) {
-      console.log("unautherized");
       return <Navigate to={"/login"} />;
     }
   }
