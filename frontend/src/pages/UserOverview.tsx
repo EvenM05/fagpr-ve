@@ -25,6 +25,8 @@ import {
   InputAdornment,
   Button,
   Container,
+  SelectChangeEvent,
+  Pagination,
 } from "@mui/material";
 import {
   Edit as EditIcon,
@@ -124,6 +126,7 @@ export const UserOverview = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<UpdateUserModel>({
     defaultValues: {
       name: "",
@@ -153,8 +156,25 @@ export const UserOverview = () => {
     }
   };
 
-  const handleEditUser = (userId: string) => {
-    setEditUser(userId);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event: SelectChangeEvent) => {
+    const value = parseInt(event.target.value, 10);
+    setPageSize(value);
+    setPage(1);
+  };
+
+  const totalPages = userData ? Math.ceil(userData.totalItems / pageSize) : 0;
+
+  const handleEditUser = (user: UserData) => {
+    setValue("name", user.name);
+    setValue("roleId", user.roleId);
+    setEditUser(user.id);
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -165,15 +185,6 @@ export const UserOverview = () => {
     setDialogString("CreateUser");
     setDialogOpen(true);
   };
-
-  if (!userData || !userRoleData) {
-    return (
-      <Box>
-        <CircularProgress />
-        <Typography>Loading...</Typography>
-      </Box>
-    );
-  }
 
   return (
     <Box
@@ -202,7 +213,7 @@ export const UserOverview = () => {
             <Card>
               <CardContent>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                  {userRoleData.total}
+                  {userRoleData?.total}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Total Users
@@ -218,7 +229,7 @@ export const UserOverview = () => {
                   color="text.secondary"
                   sx={{ fontWeight: 700 }}
                 >
-                  {userRoleData.regularUser}
+                  {userRoleData?.regularUser}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Regular Users
@@ -457,7 +468,7 @@ export const UserOverview = () => {
                         <Tooltip title="Edit User">
                           <IconButton
                             size="small"
-                            onClick={() => handleEditUser(user.id)}
+                            onClick={() => handleEditUser(user)}
                             color="primary"
                           >
                             <EditIcon />
@@ -480,15 +491,77 @@ export const UserOverview = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Container>
 
-      {userData?.totalItems > 0 && (
-        <Box mt={2}>
-          <Typography variant="body2" color="textSecondary">
-            Showing {userData.totalItems} of {userData.totalItems} users
-          </Typography>
-        </Box>
-      )}
+        {userData && userData?.totalItems > 0 && (
+          <Paper
+            sx={{
+              mt: 4,
+              p: 2,
+              bgcolor: "rgba(255, 255, 255, 0.9)",
+              backdropFilter: "blur(10px)",
+              borderRadius: 2,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Items per page:
+                </Typography>
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={pageSize.toString()}
+                    onChange={handleRowsPerPageChange}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    <MenuItem value={"10"}>10</MenuItem>
+                    <MenuItem value={"20"}>20</MenuItem>
+                    <MenuItem value={"50"}>50</MenuItem>
+                    <MenuItem value={"100"}>100</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Typography variant="body2" color="text.secondary">
+                Showing {(page - 1) * pageSize + 1}-
+                {Math.min(page * pageSize, userData.totalItems)} of{" "}
+                {userData.totalItems} projects
+              </Typography>
+
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    borderRadius: 2,
+                    fontWeight: 500,
+                  },
+                  "& .Mui-selected": {
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": {
+                      bgcolor: "primary.dark",
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Paper>
+        )}
+      </Container>
 
       <Dialog
         open={dialogOpen}

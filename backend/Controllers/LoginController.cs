@@ -42,7 +42,7 @@ namespace Fagprove.Controllers
 
             if ( !VerifyPassword(model.Password, user.PasswordHash, user.Salt)) 
             {
-                return Unauthorized(new {Error = "Unauthorized"});
+                return Unauthorized(new {Error = "Wrong password"});
             }
 
             var token = JwtTokenManager.GenerateJwtToken(user.Id);

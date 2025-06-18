@@ -150,12 +150,14 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
     }
   };
 
-  const handleChangeStatus = () => {
+  const handleChangeStatus = (e: SelectChangeEvent) => {
     if (projectData && user) {
+      const value = parseInt(e.target.value);
+      console.log(value);
       onSubmitProjectData({
         name: projectData.name,
         description: projectData.description,
-        status: projectData.status + 1,
+        status: value,
         updatedUserId: user.id,
       });
     }
@@ -373,17 +375,19 @@ export const ProjectViewDialog = (props: ProjectViewDialogProps) => {
                   <TimelineIcon sx={{ mr: 1, color: "primary.main" }} />
                   Project Progress
                 </Typography>
-                <Button
-                  disabled={
-                    projectData.status === StatusEnum.Cancelled ||
-                    projectData.status === StatusEnum.Completed
-                  }
-                  startIcon={<KeyboardTab />}
-                  onClick={handleChangeStatus}
-                  sx={{ borderRadius: "1em", bgcolor: "#ebebeb" }}
-                >
-                  Change status
-                </Button>
+                <FormControl sx={{ width: "30%" }}>
+                  <InputLabel>Change status</InputLabel>
+                  <Select
+                    value={projectData.status.toString()}
+                    label="Age"
+                    onChange={handleChangeStatus}
+                  >
+                    <MenuItem value={"0"}>To do</MenuItem>
+                    <MenuItem value={"1"}>In progress</MenuItem>
+                    <MenuItem value={"2"}>Completed</MenuItem>
+                    <MenuItem value={"3"}>Cancelled</MenuItem>
+                  </Select>
+                </FormControl>
               </Stack>
               <Box sx={{ mb: 2 }}>
                 <Box

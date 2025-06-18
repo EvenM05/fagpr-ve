@@ -109,8 +109,20 @@ namespace Fagprove.Controllers
                 Status = p.Status,
                 CreatedDate = p.CreatedDate,
                 UpdatedDate = p.UpdatedDate,
-                CreatedUser = p.CreatedUser,
-                UpdatedUser = p.UpdatedUser,
+                CreatedUser = new GetUserByIdDto
+                {
+                    Id = p.CreatedUser.Id,
+                    Name = p.CreatedUser.Name,
+                    Email = p.CreatedUser.Email,
+                    RoleId = p.CreatedUser.RoleId,
+                },
+                UpdatedUser = new GetUserByIdDto
+                {
+                    Id = p.UpdatedUser.Id,
+                    Name = p.UpdatedUser.Name,
+                    Email = p.UpdatedUser.Email,
+                    RoleId = p.UpdatedUser.RoleId,
+                },
                 Customer = p.Customer,
                 Resources = p.Resources,
             }).FirstOrDefaultAsync();
@@ -118,12 +130,12 @@ namespace Fagprove.Controllers
             return Ok(project);   
         }
 
-        [HttpGet("GetProjects")]
-        public async Task<IActionResult> GetProjectPagination([FromQuery] string searchValue = "", int page = 1, int pageSize = 10, string sortOrder = "desc", int statusFilter = 0)
+        [HttpGet("GetProjectPagination")]
+        public async Task<IActionResult> GetProjectPagination([FromQuery] string searchValue = "", int page = 1, int pageSize = 10, string sortOrder = "desc", StatusEnum? statusFilter = null)
         {
             IQueryable<Project> query = _appDbContext.Project.Where(p => p.Name.ToLower().Contains(searchValue.ToLower()));
 
-            if (statusFilter != 0)
+            if (statusFilter != null)
             {
                 query = query.Where(c => c.Status == (StatusEnum)statusFilter);
             }
@@ -150,8 +162,20 @@ namespace Fagprove.Controllers
                 Status = p.Status,
                 CreatedDate = p.CreatedDate,
                 UpdatedDate = p.UpdatedDate,
-                CreatedUser = p.CreatedUser,
-                UpdatedUser = p.UpdatedUser,
+                CreatedUser = new GetUserByIdDto
+                {
+                    Id = p.CreatedUser.Id,
+                    Name = p.CreatedUser.Name,
+                    Email = p.CreatedUser.Email,
+                    RoleId = p.CreatedUser.RoleId,
+                },
+                UpdatedUser = new GetUserByIdDto
+                {
+                    Id = p.UpdatedUser.Id,
+                    Name = p.UpdatedUser.Name,
+                    Email = p.UpdatedUser.Email,
+                    RoleId = p.UpdatedUser.RoleId,
+                },
                 Customer = p.Customer,
                 Resources = p.Resources
 

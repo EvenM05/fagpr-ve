@@ -200,17 +200,6 @@ export default function CustomerOverview() {
     return emailRegex.test(email) || "Please enter a valid email address";
   };
 
-  if (!customerData) {
-    return (
-      <Container
-        maxWidth="lg"
-        sx={{ py: 4, display: "flex", justifyContent: "center" }}
-      >
-        <CircularProgress />
-      </Container>
-    );
-  }
-
   return (
     <Box
       sx={{
@@ -375,8 +364,8 @@ export default function CustomerOverview() {
             >
               <Typography variant="body2" color="text.secondary">
                 {searchValue
-                  ? `Found ${customerData.totalItems} results for "${searchValue}"`
-                  : `Showing ${customerData.items.length} of ${customerData.totalItems} customers`}
+                  ? `Found ${customerData?.totalItems} results for "${searchValue}"`
+                  : `Showing ${customerData?.items.length} of ${customerData?.totalItems} customers`}
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Typography variant="body2" color="text.secondary">
@@ -419,7 +408,7 @@ export default function CustomerOverview() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {customerData.items.length > 0 ? (
+                  {customerData ? (
                     customerData.items.map((customer) => (
                       <TableRow key={customer.id} hover>
                         <TableCell>

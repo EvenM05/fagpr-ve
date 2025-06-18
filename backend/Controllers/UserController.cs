@@ -27,6 +27,7 @@ namespace Fagprove.Controllers
         }
 
         [HttpPost("CreateUser")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto model)
         {
             if (ModelState.IsValid)
@@ -68,7 +69,7 @@ namespace Fagprove.Controllers
                     user.Name = updateModel.name;
                 }
 
-                if (updateModel.newPassword != null)
+                if (updateModel.newPassword != "")
                 {
                     var salt = BCrypt.Net.BCrypt.GenerateSalt();
                     var hashedPassword = BCrypt.Net.BCrypt.HashPassword(updateModel.newPassword, salt);
@@ -174,7 +175,7 @@ namespace Fagprove.Controllers
             var result = new
             {
                 total = await _appDbContext.User.CountAsync(),
-                regularUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.ProjectManager).CountAsync(),
+                regularUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.User).CountAsync(),
                 pmUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.ProjectManager).CountAsync(),
                 adminUser = await _appDbContext.User.Where(u => u.RoleId == RoleEnum.Admin).CountAsync()
             };

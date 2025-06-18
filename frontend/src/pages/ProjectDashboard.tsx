@@ -35,6 +35,7 @@ import {
   useGetProjectStatusList,
 } from "../api/hooks";
 import { ResourceData } from "../utilities/Interfaces/ResourceInterface";
+import { useNavigate } from "react-router-dom";
 
 const statusColors = {
   [StatusEnum.ToDo]: { bg: "#eceff1", color: "#263238", label: "Not Started" },
@@ -72,6 +73,7 @@ export default function ProjectDashboard() {
 
   const { data: monthlyData, isLoading: monthlyDataLoading } =
     useGetProjectMonthlyData();
+  const navigate = useNavigate();
 
   const metrics = useMemo(() => {
     if (projectData) {
@@ -606,14 +608,13 @@ export default function ProjectDashboard() {
                     open={Boolean(anchorEl)}
                     onClose={() => setAnchorEl(null)}
                   >
-                    <MenuItem onClick={() => setAnchorEl(null)}>
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/projectoverview");
+                        setAnchorEl(null);
+                      }}
+                    >
                       View All Projects
-                    </MenuItem>
-                    <MenuItem onClick={() => setAnchorEl(null)}>
-                      Export Data
-                    </MenuItem>
-                    <MenuItem onClick={() => setAnchorEl(null)}>
-                      Settings
                     </MenuItem>
                   </Menu>
                 </CardContent>

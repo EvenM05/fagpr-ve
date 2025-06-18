@@ -37,8 +37,8 @@ namespace Fagprove.Models.Dto
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public GetUserByIdDto CreatedUser { get; set; }
+        public GetUserByIdDto UpdatedUser { get; set; }
 
         public Customer Customer { get; set; }
         

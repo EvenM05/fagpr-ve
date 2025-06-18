@@ -26,7 +26,6 @@ import {
   UserRoleData,
 } from "../../utilities/Interfaces/UserInterfaces";
 import http from "../http";
-import { useNavigate } from "react-router-dom";
 
 export class ApiClient {
   static baseUrl = "http://localhost:5219/api/";
@@ -240,7 +239,7 @@ export class ApiClient {
       }
 
       const response = await http.get(
-        `${ApiClient.baseUrl}Project/GetProjects?${params.toString()}`,
+        `${ApiClient.baseUrl}Project/GetProjectPagination?${params.toString()}`,
       );
 
       const data: PaginationBase<ProjectData> = response.data;

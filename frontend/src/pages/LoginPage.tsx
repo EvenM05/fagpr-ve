@@ -213,16 +213,6 @@ export default function LoginPage() {
                         Forgot your password?
                       </Typography>
                     </Button>
-
-                    <Button sx={{ textTransform: "none" }}>
-                      <Typography
-                        onClick={() => navigate("/register")}
-                        variant="body2"
-                        color="primary"
-                      >
-                        Don't have an account?
-                      </Typography>
-                    </Button>
                   </Stack>
                 </Box>
               </CardContent>

@@ -216,9 +216,7 @@ const ProjectOverview: React.FC = () => {
                     variant="h4"
                     sx={{ fontWeight: 700, color: "success.main" }}
                   >
-                    {projectData?.items.filter(
-                      (p) => p.status === StatusEnum.Completed,
-                    ).length || 0}
+                    {projectStatusData?.completedProjects}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Completed
@@ -233,9 +231,7 @@ const ProjectOverview: React.FC = () => {
                     variant="h4"
                     sx={{ fontWeight: 700, color: "info.main" }}
                   >
-                    {projectData?.items.filter(
-                      (p) => p.status === StatusEnum.InProgress,
-                    ).length || 0}
+                    {projectStatusData?.startedProjects}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     In Progress
@@ -250,9 +246,7 @@ const ProjectOverview: React.FC = () => {
                     variant="h4"
                     sx={{ fontWeight: 700, color: "warning.main" }}
                   >
-                    {projectData?.items.filter(
-                      (p) => p.status === StatusEnum.ToDo,
-                    ).length || 0}
+                    {projectStatusData?.toDoProjects}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     To Do
@@ -338,7 +332,7 @@ const ProjectOverview: React.FC = () => {
                   variant="outlined"
                   onClick={() => {
                     setSearchValue("");
-                    setStatusFilter(0);
+                    setStatusFilter(undefined);
                     setSortOrder("desc");
                   }}
                   sx={{ py: 1.5, borderRadius: 2 }}
@@ -430,6 +424,8 @@ const ProjectOverview: React.FC = () => {
                               bgcolor:
                                 project.status === StatusEnum.Cancelled
                                   ? "#d32f2f"
+                                  : project.status === StatusEnum.Completed
+                                  ? "#2e7d32"
                                   : "",
                             },
                           }}
