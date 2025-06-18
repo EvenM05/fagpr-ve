@@ -2,9 +2,9 @@ name: EF Core API CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, pipeline_testing]
   pull_request:
-    branches: [main]
+    branches: [main, pipeline_testing]
 
 jobs:
   build-and-test:
