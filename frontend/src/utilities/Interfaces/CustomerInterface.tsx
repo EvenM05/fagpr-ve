@@ -10,3 +10,8 @@ export interface CreateCustomerData {
   contactMail: string;
   organizationNumber: number;
 }
+
+export interface UpdateCustomerData {
+  customerId: string;
+  updateData: CreateCustomerData;
+}

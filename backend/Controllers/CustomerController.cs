@@ -44,6 +44,41 @@ namespace Fagprove
             return BadRequest(model);
         }
 
+        [HttpPut("UpdateCustomerData")]
+        public async Task<IActionResult> UpdateCustomerData(Guid id, CreateCustomerDto updateModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var customer = await _appDbContext.Customers.FindAsync(id);
+
+                if (customer == null)
+                {
+                    return NotFound(id);
+                }
+
+                if (updateModel.Name != null)
+                    {
+                        customer.Name = updateModel.Name;
+                    }
+
+                if (updateModel.ContactMail != null)
+                {
+                    customer.ContactMail = updateModel.ContactMail;
+                }
+
+                if (updateModel.OrganizationNumber != null)
+                {
+                    customer.OrganizationNumber = updateModel.OrganizationNumber;
+                }
+
+                await _appDbContext.SaveChangesAsync();
+                return Ok(customer);
+            
+            }
+
+            return BadRequest(updateModel);
+        }
+
         [HttpGet("GetCustomerPagination")]
         public async Task<IActionResult> GetCustomerPagination(string searchValue = "", int page = 1, int pageSize = 10)
         {
@@ -66,12 +101,29 @@ namespace Fagprove
 
             return Ok(result);
         }
+
         [HttpGet("GetAllCustomers")]
         public async Task<IActionResult> GetAllCustomers()
         {
             var customer = await _appDbContext.Customers.ToListAsync();
 
             return Ok(customer);
+        }
+
+        [HttpDelete("DeleteCustomer")]
+        public async Task<IActionResult> DeleteCustomer(Guid id)
+        {
+            var customers = await _appDbContext.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if (customers == null)
+            {
+                return NotFound(id);
+            }
+
+            _appDbContext.Remove(customers);
+            await _appDbContext.SaveChangesAsync();
+
+            return Ok(id);
         }
     }
 }

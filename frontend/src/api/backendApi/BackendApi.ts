@@ -289,6 +289,18 @@ export class ApiClient {
     }
   }
 
+  static async updateCustomer(customerId: string, model: CreateCustomerData) {
+    try {
+      const response = await http.put(
+        ApiClient.baseUrl + `Customer/UpdateCustomerData?id=${customerId}`,
+        model,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating customer data: ", error);
+    }
+  }
+
   static async getCustomerPagination(
     searchValue: string,
     page: number,
@@ -317,6 +329,17 @@ export class ApiClient {
       return data;
     } catch (error) {
       console.error("Error getting customer: ", error);
+    }
+  }
+
+  static async deleteCustomer(customerId: string) {
+    try {
+      const response = await http.delete(
+        ApiClient.baseUrl + `Customer/DeleteCustomer?id=${customerId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting customer: ", error);
     }
   }
 

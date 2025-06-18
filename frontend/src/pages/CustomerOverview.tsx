@@ -42,9 +42,15 @@ import useDebounce from "../utilities/useDebounce";
 import {
   CreateCustomerData,
   CustomerData,
+  UpdateCustomerData,
 } from "../utilities/Interfaces/CustomerInterface";
 import { GET_CUSTOMER_PAGINATION } from "../api/constants";
-import { useGetCustomerPagination, usePostCustomer } from "../api/hooks";
+import {
+  useDeleteCustomer,
+  useGetCustomerPagination,
+  usePostCustomer,
+  useUpdateCustomer,
+} from "../api/hooks";
 
 export default function CustomerOverview() {
   const [open, setOpen] = useState<boolean>(false);
@@ -74,6 +80,9 @@ export default function CustomerOverview() {
   };
 
   const { mutateAsync: createCustomer } = usePostCustomer(onSuccess);
+  const { mutateAsync: updateCustomer } = useUpdateCustomer(onSuccess);
+  const { mutateAsync: deleteCustomer } = useDeleteCustomer(onSuccess);
+
   const { data: customerData } = useGetCustomerPagination(
     debouncedSearch,
     page,
@@ -128,11 +137,11 @@ export default function CustomerOverview() {
   const onSubmit = (data: CreateCustomerData) => {
     setTimeout(() => {
       if (editingCustomer) {
-        setSnackbar({
-          open: true,
-          message: "Customer updated successfully!",
-          severity: "success",
-        });
+        const updateData: UpdateCustomerData = {
+          customerId: editingCustomer.id,
+          updateData: data,
+        };
+        updateCustomer(updateData);
       } else {
         createCustomer(data);
         setSnackbar({
@@ -146,6 +155,7 @@ export default function CustomerOverview() {
   };
 
   const handleDeleteCustomer = (id: string) => {
+    deleteCustomer(id);
     setSnackbar({
       open: true,
       message: "Customer deleted successfully!",

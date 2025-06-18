@@ -23,7 +23,10 @@ import {
   UserData,
 } from "../../utilities/Interfaces/UserInterfaces";
 import { RoleEnum } from "../../utilities/enums/roleEnums";
-import { CreateCustomerData } from "../../utilities/Interfaces/CustomerInterface";
+import {
+  CreateCustomerData,
+  UpdateCustomerData,
+} from "../../utilities/Interfaces/CustomerInterface";
 import { CreateResourceData } from "../../utilities/Interfaces/ResourceInterface";
 import {
   CreateProjectModel,
@@ -168,6 +171,13 @@ export const usePostCustomer = (onSuccess: () => void) =>
     onSuccess,
   });
 
+export const useUpdateCustomer = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (model: UpdateCustomerData) =>
+      ApiClient.updateCustomer(model.customerId, model.updateData),
+    onSuccess,
+  });
+
 export const useGetCustomerPagination = (
   searchValue: string,
   page: number,
@@ -182,6 +192,12 @@ export const useGetAllCustomers = () =>
   useQuery({
     queryKey: [GET_ALL_CUSTOMERS],
     queryFn: () => ApiClient.getAllCustomer(),
+  });
+
+export const useDeleteCustomer = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: (customerId: string) => ApiClient.deleteCustomer(customerId),
+    onSuccess,
   });
 
 /* Resource hooks */

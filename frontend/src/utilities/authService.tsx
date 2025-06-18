@@ -11,7 +11,6 @@ const useAuthService = () => {
 
   const fetchUser = async () => {
     const response = await ApiClient.getAuthenticatedUser();
-    console.log("response status: ", response?.status);
     if (response?.status === 401 || !response) {
       navigate("/login");
     }
